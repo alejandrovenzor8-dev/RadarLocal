@@ -1,10 +1,10 @@
 # RadarLocal
 
-Demo responsive del directorio RadarLocal con 40 negocios, búsqueda, filtros, mapa ilustrativo, favoritos persistentes, acceso simulado, panel de negocio, catálogo, promociones y analítica.
+Demo responsive del directorio RadarLocal con ocho perfiles reales documentados en cuatro rubros, en el orden de popularidad del estudio del proyecto: restaurantes, inmobiliarias, salones de eventos y vinos. Incluye búsqueda, filtros, mapa ilustrativo, favoritos persistentes, acceso simulado, panel de negocio, catálogo, promociones de ejemplo y analítica simulada.
 
 Ejecuta `npm install` y `npm run dev`. Accesos: `cliente@radarlocal.mx` / `DemoCliente2026!` y `negocio@radarlocal.mx` / `DemoNegocio2026!`.
 
-La sesión, favoritos y ediciones usan `localStorage`; no es autenticación segura para producción. La capa se puede sustituir por Supabase o PostgreSQL con autenticación de servidor y políticas por rol. No hay claves privadas, pagos ni reservaciones reales. Antes del lanzamiento se requiere autorización para usar logotipos y fotografías comerciales.
+La sesión, favoritos y ediciones usan `localStorage`; no es autenticación segura para producción. La capa se puede sustituir por Supabase o PostgreSQL con autenticación de servidor y políticas por rol. No hay claves privadas, pagos ni reservaciones reales. Las imágenes de sus fuentes documentadas se guardan en el proyecto; antes de una presentación pública o lanzamiento se debe obtener autorización para su uso comercial. Ver [DATA_SOURCES.md](DATA_SOURCES.md).
 
 ## Base técnica
 

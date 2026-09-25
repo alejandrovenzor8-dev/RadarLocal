@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "RadarLocal | Encuentra lo mejor cerca de ti",
-  description: "Directorio digital para descubrir negocios, servicios y promociones en Chihuahua.",
+  title: "RadarLocal | Negocios de Chihuahua",
+  description: "Demo de negocios de Chihuahua en restaurantes, inmobiliarias, salones de eventos y vinos.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
