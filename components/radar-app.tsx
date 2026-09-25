@@ -1,14 +1,17 @@
 "use client";
-import {useEffect,useMemo,useState} from "react";
+import {useCallback,useEffect,useMemo,useState} from "react";
 import {usePathname,useRouter} from "next/navigation";
 import Image from "next/image";
 import {Area,AreaChart,CartesianGrid,ResponsiveContainer,Tooltip,XAxis,YAxis} from "recharts";
 import {Search,MapPin,Heart,Compass,ArrowRight,Store,User,LayoutDashboard,Tag,BarChart3,Settings,ChevronRight,X,SlidersHorizontal,Navigation,Phone,Globe2,Clock3,ShieldCheck,RotateCcw,LogOut,Plus,Check,Sparkles,Utensils,House,PartyPopper,Wine,ShoppingBag} from "lucide-react";
 import {activity,businesses,categories,promotions,type Business} from "@/lib/radar-data";
+import GoogleBusinessMap from "@/components/google-business-map";
+import type {MapPoint} from "@/components/google-business-map";
 const iconMap:any={Utensils,House,PartyPopper,Wine};
-const googleMapsKey=process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 function mapsQuery(b:Business){return `${b.name}, Chihuahua, México`}
 function mapsUrl(b:Business){return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapsQuery(b))}`}
+function straightLineKm(a:MapPoint,b:MapPoint){const radians=Math.PI/180;const dLat=(b.lat-a.lat)*radians,dLng=(b.lng-a.lng)*radians;const h=Math.sin(dLat/2)**2+Math.cos(a.lat*radians)*Math.cos(b.lat*radians)*Math.sin(dLng/2)**2;return 6371*2*Math.atan2(Math.sqrt(h),Math.sqrt(1-h))}
+function distanceLabel(km:number){return km<1?`${Math.round(km*1000)} m`:`${km.toFixed(1)} km`}
 const nav=[{href:"/explorar",label:"Explorar"},{href:"/promociones",label:"Promociones"},{href:"/mapa",label:"Mapa"},{href:"/para-negocios",label:"Para negocios"}];
 function go(r:any,p:string){r.push(p);window.scrollTo({top:0,behavior:"smooth"})}
 function Logo({compact=false}:{compact?:boolean}){return <a className="brand" href="/"><Image src="/brand/radarlocal-logo.png" width={compact?42:54} height={compact?42:54} alt="RadarLocal" priority/><span><b>Radar</b><strong>Local</strong></span></a>}
@@ -35,8 +38,40 @@ function Empty({clear}:{clear:()=>void}){return <div className="empty"><Search/>
 function Profile({slug,favs,fav}:{slug:string;favs:string[];fav:(x:string)=>void}){const b=businesses.find(x=>x.slug===slug);if(!b)return <main className="simple-page"><div className="container"><h1>Negocio no encontrado</h1><p>El perfil que buscas no está en esta demo.</p><a className="btn primary" href="/explorar">Explorar negocios</a></div></main>;const cat=categories.find(c=>c.id===b.categoryId)!;return <main className="profile-page"><section className={`profile-cover ${b.cover}`} style={{backgroundImage:`url("${b.imageUrl}")`}}><span>Imagen publicada · <a href={b.imageSource} target="_blank" rel="noopener noreferrer">ver fuente</a></span></section><div className="container profile-wrap"><section className="profile-main"><div className="identity"><div className="avatar">{b.name.split(" ").slice(0,2).map(x=>x[0]).join("")}</div><div><span className="cat-label">{cat.name}</span><h1>{b.name}</h1><p>{b.shortDescription}</p><div className="card-meta"><span><MapPin/> {b.zone}, Chihuahua</span></div></div></div><Info title="Acerca de este negocio"><p>{b.shortDescription} Este perfil muestra cómo RadarLocal puede organizar su oferta para nuevos clientes.</p><a href={b.sourceUrl} target="_blank" rel="noopener noreferrer">Consultar fuente del negocio <ArrowRight/></a></Info><Info title="Productos y servicios"><div className="service-grid">{b.services.map(s=><div key={s}><span>✦</span><b>{s}</b><p>Consulta disponibilidad con el negocio.</p></div>)}</div></Info><Info title="Ubicación"><p><MapPin/> {b.zone}, Chihuahua. Confirma la dirección antes de visitar.</p><a href={mapsUrl(b)} target="_blank" rel="noopener noreferrer">Buscar en Google Maps <ArrowRight/></a></Info></section><aside className="contact-card"><span className="demo-data">Perfil ilustrativo</span><h3>Conoce a {b.name}</h3><a className="btn primary" href={b.sourceUrl} target="_blank" rel="noopener noreferrer"><Globe2/> Visitar fuente <ArrowRight/></a><button className="btn ghost" onClick={()=>fav(b.id)}><Heart fill={favs.includes(b.id)?"currentColor":"none"}/> {favs.includes(b.id)?"Guardado":"Guardar"}</button><small>RadarLocal aún no recibe contactos reales para estos negocios.</small></aside></div></main>}
 function Info({title,children}:{title:string;children:any}){return <section className="info-section"><h2>{title}</h2>{children}</section>}
 function Promotions(){return <main className="simple-page"><div className="container"><span className="eyebrow">Herramienta para negocios</span><h1>Promociones de ejemplo</h1><p className="lead">Estas ideas ilustran el formato. No son ofertas vigentes ni propuestas por los negocios mencionados.</p><div className="promo-grid wide">{promotions.map(p=><PromoCard key={p.id} p={p}/>)}</div></div></main>}
-function MapCanvas({business=businesses[0]}:{business?:Business}){const src=googleMapsKey?`https://www.google.com/maps/embed/v1/place?key=${encodeURIComponent(googleMapsKey)}&q=${encodeURIComponent(mapsQuery(business))}&zoom=14&language=es`:null;return <div className="map-canvas google-map">{src?<iframe key={business.id} src={src} title={`Google Maps: ${business.name}`} loading="lazy" allowFullScreen/>:<div className="map-fallback"><MapPin/><b>Mapa no configurado</b><span>Agrega una clave de Maps Embed API para mostrar Google Maps.</span></div>}<span className="map-caption">Google Maps · Verifica la ubicación antes de visitar</span></div>}
-function MapPage({router}:{router:any}){const[selected,setSelected]=useState(businesses[0]);return <main className="map-page"><aside><span className="eyebrow">Google Maps · demo</span><h1>Negocios para descubrir</h1><p className="map-disclaimer">Selecciona un negocio para buscarlo en el mapa. Confirma la ubicación con el negocio antes de visitarlo.</p><div className="map-list">{businesses.map(b=><button key={b.id} onClick={()=>setSelected(b)} className={selected.id===b.id?"selected":""}><span className={`mini-cover ${b.cover}`}>{b.name[0]}</span><span><b>{b.name}</b><small>{b.zone} · Ubicación por confirmar</small></span></button>)}</div></aside><section className="map-full"><MapCanvas business={selected}/><div className="map-popup"><span className={`mini-cover ${selected.cover}`}>{selected.name[0]}</span><div><small>{categories.find(c=>c.id===selected.categoryId)?.name}</small><b>{selected.name}</b><span>Resultado de búsqueda en Google Maps</span><button onClick={()=>go(router,"/negocio/"+selected.slug)}>Ver perfil <ArrowRight/></button><a href={mapsUrl(selected)} target="_blank" rel="noopener noreferrer">Abrir en Google Maps <ArrowRight/></a></div></div></section></main>}
+function MapCanvas({business=businesses[0]}:{business?:Business}){return <GoogleBusinessMap business={business}/>}
+function MapPage({router}:{router:any}){
+  const[selected,setSelected]=useState(businesses[0]);
+  const[userLocation,setUserLocation]=useState<MapPoint|null>(null);
+  const[locationStatus,setLocationStatus]=useState<"idle"|"requesting"|"ready"|"error">("idle");
+  const[locationMessage,setLocationMessage]=useState("");
+  const[places,setPlaces]=useState<Record<string,MapPoint>>({});
+  const updatePlaces=useCallback((found:Record<string,MapPoint>)=>setPlaces(found),[]);
+  const ranked=useMemo(()=>businesses.map(b=>({business:b,distance:userLocation&&places[b.id]?straightLineKm(userLocation,places[b.id]):null})).sort((a,b)=>{
+    if(!userLocation)return 0;
+    if(a.distance===null)return 1;
+    if(b.distance===null)return -1;
+    return a.distance-b.distance;
+  }),[userLocation,places]);
+  const locate=()=>{
+    if(!navigator.geolocation){setLocationStatus("error");setLocationMessage("Este navegador no permite consultar tu ubicación.");return}
+    setLocationStatus("requesting");
+    setLocationMessage("");
+    navigator.geolocation.getCurrentPosition(
+      position=>{setUserLocation({lat:position.coords.latitude,lng:position.coords.longitude});setLocationStatus("ready")},
+      error=>{setUserLocation(null);setLocationStatus("error");setLocationMessage(error.code===1?"No diste permiso de ubicación. Puedes seguir explorando el mapa.":error.code===3?"No pudimos obtener tu ubicación a tiempo. Intenta de nuevo.":"No pudimos obtener tu ubicación. Revisa los permisos del dispositivo.")},
+      {enableHighAccuracy:false,timeout:12000,maximumAge:60000}
+    );
+  };
+  return <main className="map-page"><aside>
+    <span className="eyebrow">Google Maps · demo</span>
+    <h1>{userLocation?"Lugares más cercanos":"Negocios para descubrir"}</h1>
+    <p className="map-disclaimer">{userLocation?"Distancias aproximadas en línea recta entre tu ubicación y los negocios encontrados por Google.":"Activa tu ubicación para ver cuáles de estos negocios están más cerca de ti."}</p>
+    <button className="btn primary locate-button" onClick={locate} disabled={locationStatus==="requesting"}><Navigation/>{locationStatus==="requesting"?"Buscando tu ubicación…":userLocation?"Actualizar mi ubicación":"Usar mi ubicación"}</button>
+    {locationMessage&&<p className="location-message" role="status">{locationMessage}</p>}
+    {userLocation&&<div className="map-legend"><span><i className="you"/> Tu ubicación</span>{categories.map(category=><span key={category.id}><i style={{background:category.color}}/> {category.name}</span>)}</div>}
+    <div className="map-list">{ranked.map(({business:b,distance},index)=><button key={b.id} onClick={()=>setSelected(b)} className={selected.id===b.id?"selected":""}><span className={`mini-cover ${b.cover}`}>{b.name[0]}</span><span><b>{b.name}</b><small>{b.zone} · {distance===null?"Ubicación por confirmar":distanceLabel(distance)}</small>{userLocation&&distance!==null&&index<3&&<em className="nearby-tag">De los más cercanos</em>}</span></button>)}</div>
+  </aside><section className="map-full"><GoogleBusinessMap business={selected} listings={businesses} userLocation={userLocation} onPlacesChange={updatePlaces} onSelectBusiness={setSelected}/><div className="map-popup"><span className={`mini-cover ${selected.cover}`}>{selected.name[0]}</span><div><small>{categories.find(c=>c.id===selected.categoryId)?.name}</small><b>{selected.name}</b><span>{userLocation&&places[selected.id]?`${distanceLabel(straightLineKm(userLocation,places[selected.id]))} · en línea recta`:"Ubicación sugerida por Google Maps"}</span><button onClick={()=>go(router,"/negocio/"+selected.slug)}>Ver perfil <ArrowRight/></button><a href={mapsUrl(selected)} target="_blank" rel="noopener noreferrer">Abrir en Google Maps <ArrowRight/></a></div></div></section></main>
+}
 
 function Login({login}:{login:(x:string)=>void}){const[error,setError]=useState(""),[email,setEmail]=useState(""),[password,setPassword]=useState("");const submit=()=>{if(email==="cliente@radarlocal.mx"&&password==="DemoCliente2026!")login("client");else if(email==="negocio@radarlocal.mx"&&password==="DemoNegocio2026!")login("owner");else setError("Credenciales de demo incorrectas. Usa uno de los accesos mostrados abajo.")};return <main className="auth-page"><section className="auth-aside"><Logo/><div><span className="eyebrow light">RadarLocal para negocios</span><h1>Descubre y presenta tu negocio en Chihuahua.</h1><p>Recorre el directorio y prueba el panel del propietario.</p></div><small>RadarLocal · Chihuahua, México</small></section><section className="auth-card"><span className="eyebrow">Acceso al demo</span><h2>Bienvenido a RadarLocal</h2><p>Estas cuentas son simuladas y solo sirven para la presentación.</p><form onSubmit={e=>{e.preventDefault();submit()}}><label>Correo<input value={email} onChange={e=>setEmail(e.target.value)} placeholder="correo@ejemplo.com"/></label><label>Contraseña<input value={password} onChange={e=>setPassword(e.target.value)} type="password" placeholder="••••••••"/></label>{error&&<div className="error">{error}</div>}<button className="btn primary">Iniciar sesión</button></form><div className="or"><span/>o prueba rápidamente<span/></div><button className="btn demo-client" onClick={()=>login("client")}><User/> Entrar como cliente demo</button><button className="btn dark" onClick={()=>login("owner")}><Store/> Entrar como negocio demo</button><div className="credentials"><b>Credenciales demo</b><span>cliente@radarlocal.mx · DemoCliente2026!</span><span>negocio@radarlocal.mx · DemoNegocio2026!</span></div></section></main>}
 
