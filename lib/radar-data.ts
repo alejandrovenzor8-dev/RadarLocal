@@ -31,3 +31,47 @@ export const promotions=[
   {id:"p4",business:"Bodegas Pinesque",title:"Conoce el vino de Chihuahua",valid:"Ejemplo sin vigencia real",category:"wine"},
 ];
 export const activity=[{day:"1 sep",visits:44,contacts:8},{day:"5 sep",visits:58,contacts:11},{day:"9 sep",visits:50,contacts:9},{day:"13 sep",visits:72,contacts:14},{day:"17 sep",visits:83,contacts:18},{day:"21 sep",visits:76,contacts:15},{day:"25 sep",visits:96,contacts:22},{day:"30 sep",visits:112,contacts:26}];
+
+// Antojos y planes del inicio: atajos para cuando no sabes qué buscar. Cada uno busca sobre servicios ya documentados.
+export const cravings=[
+  {label:"Cena especial",emoji:"🥩",q:"Cortes"},
+  {label:"Reservar mesa",emoji:"🍽️",q:"Reservaciones"},
+  {label:"Plan en pareja",emoji:"🍷",q:"Catas"},
+  {label:"Para celebrar",emoji:"🎉",q:"Eventos"},
+  {label:"Boda en puerta",emoji:"💍",q:"Bodas"},
+  {label:"Escapada al viñedo",emoji:"🍇",q:"Viñedo"},
+  {label:"Casa nueva",emoji:"🏡",q:"Venta"},
+];
+
+// Encuesta de la semana. Los votos iniciales son de ejemplo; el voto del visitante se guarda en su dispositivo.
+export type Poll={id:string;question:string;options:{id:string;label:string;emoji:string;votes:number}[]};
+export const polls:Poll[]=[
+  {id:"antojo-fin",question:"¿Qué se te antoja este fin?",options:[{id:"tacos",label:"Tacos",emoji:"🌮",votes:128},{id:"sushi",label:"Sushi",emoji:"🍣",votes:74},{id:"hamburguesas",label:"Hamburguesas",emoji:"🍔",votes:96},{id:"boneless",label:"Boneless",emoji:"🍗",votes:81},{id:"cortes",label:"Cortes",emoji:"🥩",votes:57}]},
+  {id:"zona-falta",question:"¿Qué zona sientes que le faltan opciones?",options:[{id:"norte",label:"Zona norte",emoji:"🧭",votes:63},{id:"sur",label:"Zona sur",emoji:"🌵",votes:88},{id:"centro",label:"Centro",emoji:"⛪",votes:41},{id:"poniente",label:"Poniente",emoji:"🌄",votes:52}]},
+  {id:"plan-sabado",question:"Tu plan ideal de sábado es…",options:[{id:"comer",label:"Comer rico con la familia",emoji:"🍽️",votes:112},{id:"vinedo",label:"Ir a un viñedo",emoji:"🍇",votes:47},{id:"fiesta",label:"Fiesta o evento",emoji:"🎉",votes:69},{id:"cafe",label:"Café y caminar",emoji:"☕",votes:58}]},
+];
+export function weeklyPoll(now=Date.now()){
+  // Semanas de lunes a domingo en hora de Chihuahua (UTC-6) para que servidor y navegador coincidan.
+  const day=Math.floor((now-6*3600e3)/864e5),week=Math.floor((day+3)/7);
+  return {poll:polls[week%polls.length],daysLeft:7-((day+3)%7)};
+}
+
+// Ejemplos ficticios para mostrar cómo se vería "Recién abiertos". No son negocios reales.
+export const newcomers=[
+  {id:"n1",name:"Tacos Doña Lupe",kind:"Taquería",zone:"Centro",opened:"hace 2 meses",owner:"Lupe y su hijo Toño",story:"Después de 20 años vendiendo en la feria del barrio, por fin abrimos nuestro primer local.",tryThis:"Tacos de discada y agua de jamaica",emoji:"🌮",color:"#C65B35"},
+  {id:"n2",name:"Café Ventana",kind:"Cafetería",zone:"San Felipe",opened:"hace 4 meses",owner:"Mariana, barista",story:"Quería un lugar para leer y platicar sin prisas, con café tostado aquí mismo.",tryThis:"Latte de piloncillo",emoji:"☕",color:"#8B5E3C"},
+  {id:"n3",name:"Burritos La Frontera",kind:"Burritos",zone:"Zona norte",opened:"hace 1 mes",owner:"Hermanos Ríos",story:"Son las recetas de nuestra abuela, en tortilla de harina hecha a mano todos los días.",tryThis:"Burrito de chile colorado",emoji:"🌯",color:"#9563A9"},
+];
+
+// TOP elegidos por el equipo. Selección editorial de demostración, no un ranking pagado ni de popularidad.
+export const teamTops=[
+  {id:"cena",title:"Para una cena especial",note:"Cuando quieres quedar bien.",picks:[{id:"food-2",why:"Cortes, panadería y bar, con espacios para reuniones."},{id:"food-1",why:"Cocina sonorense de autor en Distrito Uno. Puedes reservar."}]},
+  {id:"celebrar",title:"Para celebrar en grande",note:"Bodas, XV años y todo lo que se festeja.",picks:[{id:"events-6",why:"Salón y terraza con vista al campo de golf."},{id:"events-5",why:"Jardín, salón y terraza en un mismo lugar."}]},
+  {id:"vino",title:"Vino hecho en Chihuahua",note:"Para presumir lo de aquí.",picks:[{id:"wine-8",why:"Vinos del Valle de Encinillas, con viñedo para conocer."},{id:"wine-7",why:"Vinos de autor con visitas y catas en la bodega."}]},
+];
+
+// Anuncios de restaurantes para la barra lateral del inicio (ejemplos, sin contrato real).
+export const sideAds=[
+  {id:"food-1",tagline:"Cocina sonorense de autor. Reserva tu mesa para este fin."},
+  {id:"food-2",tagline:"Cortes, panadería y bar para tu próxima reunión."},
+];

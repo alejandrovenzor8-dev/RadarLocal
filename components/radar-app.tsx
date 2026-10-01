@@ -1,10 +1,10 @@
 "use client";
-import {useCallback,useEffect,useMemo,useRef,useState} from "react";
+import {useCallback,useEffect,useMemo,useRef,useState,type RefObject} from "react";
 import {usePathname,useRouter} from "next/navigation";
 import Image from "next/image";
 import {Area,AreaChart,CartesianGrid,ResponsiveContainer,Tooltip,XAxis,YAxis} from "recharts";
-import {Search,MapPin,Heart,Compass,ArrowRight,Store,User,LayoutDashboard,Tag,BarChart3,Settings,ChevronRight,X,SlidersHorizontal,Navigation,Phone,Globe2,Clock3,ShieldCheck,RotateCcw,LogOut,Plus,Check,Sparkles,Utensils,House,PartyPopper,Wine,ShoppingBag,Menu,ChevronLeft} from "lucide-react";
-import {activity,businesses,categories,promotions,type Business} from "@/lib/radar-data";
+import {Search,MapPin,Heart,Compass,ArrowRight,Store,User,LayoutDashboard,Tag,BarChart3,Settings,ChevronRight,X,SlidersHorizontal,Navigation,Phone,Globe2,Clock3,ShieldCheck,RotateCcw,LogOut,Plus,Check,Sparkles,Utensils,House,PartyPopper,Wine,ShoppingBag,Menu,ChevronLeft,ChevronDown,Trophy,Vote} from "lucide-react";
+import {activity,businesses,categories,cravings,newcomers,promotions,sideAds,teamTops,weeklyPoll,type Business} from "@/lib/radar-data";
 import GoogleBusinessMap from "@/components/google-business-map";
 import type {MapPoint} from "@/components/google-business-map";
 const iconMap:any={Utensils,House,PartyPopper,Wine};
@@ -21,13 +21,110 @@ export default function RadarApp(){const router=useRouter(),path=usePathname();c
 function CatBar({path,onGo}:{path:string;onGo:(p:string)=>void}){const ref=useRef<HTMLDivElement>(null);const[edge,setEdge]=useState({l:false,r:false});const update=useCallback(()=>{const el=ref.current;if(!el)return;setEdge({l:el.scrollLeft>2,r:el.scrollLeft+el.clientWidth<el.scrollWidth-2})},[]);useEffect(()=>{const el=ref.current;if(!el)return;update();const ro=new ResizeObserver(update);ro.observe(el);el.addEventListener("scroll",update,{passive:true});return()=>{ro.disconnect();el.removeEventListener("scroll",update)}},[update]);const move=(d:number)=>{const el=ref.current;if(!el)return;const step=(el.firstElementChild as HTMLElement|null)?.offsetWidth||el.clientWidth/4;el.scrollBy({left:d*(step+8),behavior:"smooth"})};return <div className="cat-wrap"><button className="cat-arrow" aria-label="Categorías anteriores" disabled={!edge.l} onClick={()=>move(-1)}><ChevronLeft/></button><nav ref={ref} className="cat-bar" aria-label="Categorías">{categories.map(c=>{const I=iconMap[c.icon]||Store,active=path==="/categorias/"+c.slug;return <button key={c.id} title={c.name} className={active?"active":""} aria-current={active?"page":undefined} style={{"--cat":c.color} as any} onClick={()=>onGo("/categorias/"+c.slug)}><i><I/></i><span>{c.name}</span></button>})}</nav><button className="cat-arrow" aria-label="Más categorías" disabled={!edge.r} onClick={()=>move(1)}><ChevronRight/></button></div>}
 function Header({router,role,path}:{router:any;role:string;path:string}){const[open,setOpen]=useState(false);useEffect(()=>{if(!open)return;const onKey=(e:KeyboardEvent)=>{if(e.key==="Escape")setOpen(false)};window.addEventListener("keydown",onKey);return()=>window.removeEventListener("keydown",onKey)},[open]);const nav2=(p:string)=>{setOpen(false);go(router,p)};const account=role==="owner"?"/panel-negocio":role?"/mi-cuenta":"/login";return <header className="topbar"><div className="container header-inner"><Logo/><CatBar path={path} onGo={nav2}/><div className="header-actions"><span className="location"><MapPin/> Chihuahua, Chihuahua</span><button className="btn ghost" onClick={()=>nav2(account)}><User/>{role?"Mi panel":"Iniciar sesión"}</button><button className="btn primary" onClick={()=>nav2("/registro")}><Store/> Prueba el panel</button></div><div className="menu-wrap"><button className="menu-toggle" aria-label={open?"Cerrar menú":"Abrir menú"} aria-expanded={open} aria-controls="main-menu" onClick={()=>setOpen(o=>!o)}>{open?<X/>:<Menu/>}</button>{open&&<><div className="menu-backdrop" onClick={()=>setOpen(false)}/><nav id="main-menu" className="menu-list">{nav.map(n=><button key={n.href} onClick={()=>nav2(n.href)}>{n.label}<ChevronRight/></button>)}<div className="menu-extra"><button onClick={()=>nav2(account)}><User/>{role?"Mi panel":"Iniciar sesión"}</button><button onClick={()=>nav2("/registro")}><Store/> Prueba el panel</button></div></nav></>}</div></div></header>}
 function MobileNav({router}:{router:any}){return <nav className="mobile-nav">{[["/","Inicio",Compass],["/explorar","Explorar",Search],["/mapa","Mapa",MapPin],["/mi-cuenta/favoritos","Guardados",Heart],["/login","Cuenta",User]].map(([p,l,I]:any)=><button key={p} onClick={()=>go(router,p)}><I/><span>{l}</span></button>)}</nav>}
-function SectionHead({eyebrow,title,action}:{eyebrow:string;title:string;action?:()=>void}){return <div className="section-head"><div><span className="eyebrow">{eyebrow}</span><h2>{title}</h2></div>{action&&<button onClick={action}>Ver todo <ArrowRight/></button>}</div>}
 
-function Home({router,favs,fav}:{router:any;favs:string[];fav:(x:string)=>void}){const[q,setQ]=useState("");return <main><section className="hero"><div className="container hero-grid"><div><span className="eyebrow light">Directorio local · Chihuahua</span><h1>Descubre negocios <em>cerca de ti</em></h1><p>Restaurantes, inmobiliarias, salones de eventos y vinos: los cuatro rubros priorizados en el estudio del proyecto.</p><form className="hero-search" onSubmit={e=>{e.preventDefault();go(router,"/explorar?q="+encodeURIComponent(q))}}><label><Search/><input value={q} onChange={e=>setQ(e.target.value)} placeholder="¿Qué estás buscando?"/></label><label><MapPin/><input value="Chihuahua, Chihuahua" readOnly aria-label="Ubicación"/></label><button>Buscar en RadarLocal <ArrowRight/></button></form></div><div className="radar-card"><div className="pulse p1"/><div className="pulse p2"/><div className="pulse p3"/><div className="sweep"/><span className="map-dot d1"><Store/></span><span className="map-dot d2"><House/></span><span className="map-dot d3"><Wine/></span><div className="radar-note"><b>{businesses.length} perfiles</b><span>reales para explorar</span></div></div></div></section><Sponsored router={router}/><section className="section container"><SectionHead eyebrow="Orden de interés del estudio" title="Explora por rubro" action={()=>go(router,"/explorar")}/><div className="category-grid">{categories.map(c=>{const I=iconMap[c.icon];return <button className="category-card" key={c.id} onClick={()=>go(router,"/categorias/"+c.slug)}><span style={{background:c.color}}><I/></span><div><b>{c.name}</b><small>{businesses.filter(b=>b.categoryId===c.id).length} ejemplos</small></div><ChevronRight/></button>})}</div></section><RankedByCategory router={router} favs={favs} fav={fav}/><section className="section container"><SectionHead eyebrow="Así se verían" title="Promociones de ejemplo" action={()=>go(router,"/promociones")}/><div className="promo-grid">{promotions.slice(0,3).map(p=><PromoCard key={p.id} p={p}/>)}</div></section><section className="section container"><div className="map-teaser"><MapCanvas/><div className="map-copy"><span className="eyebrow light">Google Maps · demo</span><h2>Explora la ciudad</h2><p>Explora cómo se vería cada negocio en Google Maps. Confirma la ubicación antes de visitar.</p><button className="btn white" onClick={()=>go(router,"/mapa")}>Abrir mapa <ArrowRight/></button></div></div></section><ForBusiness router={router} compact/></main>}
+function Home({router,favs,fav}:{router:any;favs:string[];fav:(x:string)=>void}){
+  const[q,setQ]=useState("");
+  const search=(term:string)=>go(router,"/explorar?q="+encodeURIComponent(term));
+  const poll=usePoll(),pollRef=useRef<HTMLElement>(null),[pollGone,setPollGone]=useState(false);
+  useEffect(()=>{const el=pollRef.current;if(!el)return;const io=new IntersectionObserver(([e])=>setPollGone(!e.isIntersecting&&e.boundingClientRect.top<0));io.observe(el);return()=>io.disconnect()},[]);
+  return <main>
+    <div className="container home-layout">
+      <section className="home-hero"><div className="home-hero-copy">
+        <span className="hello">Hola, Chihuahua 👋</span>
+        <h1>¿Qué se te <em>antoja</em> hoy?</h1>
+        <p>Si ya sabes qué buscas, búscalo. Si no, aquí te damos ideas.</p>
+        <div className="cravings">{cravings.map(c=><button key={c.label} onClick={()=>search(c.q)}><span aria-hidden="true">{c.emoji}</span>{c.label}</button>)}</div>
+        <form className="soft-search" onSubmit={e=>{e.preventDefault();search(q)}}><Search/><input value={q} onChange={e=>setQ(e.target.value)} placeholder="O busca algo en específico…" aria-label="Buscar en RadarLocal"/><button aria-label="Buscar"><ArrowRight/></button></form>
+        <small className="no-signup"><Check/> Sin registro. Tus favoritos se guardan en este celular.</small>
+      </div></section>
+      <aside className="home-side" aria-label="Encuesta y anuncios">
+        <WeeklyPoll s={poll} cardRef={pollRef}/>
+        <SideAds router={router}/>
+      </aside>
+      <div className="home-rest">
+        <Newcomers router={router}/>
+        <TeamTops router={router} favs={favs} fav={fav}/>
+        <section className="section"><div className="map-teaser"><MapCanvas/><div className="map-copy"><span className="eyebrow light">Google Maps · demo</span><h2>¿Ya sabes a dónde vas?</h2><p>Busca lo que tienes más cerca y confirma la ubicación antes de visitar.</p><button className="btn white" onClick={()=>go(router,"/mapa")}>Abrir mapa <ArrowRight/></button></div></div></section>
+      </div>
+    </div>
+    <Sponsored router={router}/>
+    <ForBusiness router={router} compact/>
+    <PollDock s={poll} show={pollGone}/>
+  </main>
+}
+
+// Anuncios de restaurantes en la barra lateral. Son ejemplos: ningún restaurante ha contratado este espacio.
+function SideAds({router}:{router:any}){return <div className="side-ads">
+  <span className="side-ads-label">Anuncios · ejemplo</span>
+  {sideAds.flatMap(a=>{const b=businesses.find(x=>x.id===a.id);return b?[{...a,b}]:[]}).map(({b,tagline})=><button key={b.id} className="side-ad" onClick={()=>go(router,"/negocio/"+b.slug)}>
+    <span className="side-ad-img" style={{backgroundImage:`url("${b.imageUrl}")`}}><span className="paid-badge">Anuncio</span></span>
+    <span className="side-ad-body"><small>Restaurante · {b.zone}</small><b>{b.name}</b><span>{tagline}</span><em>Ver restaurante <ArrowRight/></em></span>
+  </button>)}
+  <button className="side-ad-slot" onClick={()=>go(router,"/para-negocios")}><Utensils/><b>Tu restaurante aquí</b><span>Aparece junto a la encuesta que todos ven.</span><em>Anunciarme <ArrowRight/></em></button>
+</div>}
+
+function usePoll(){
+  const{poll,daysLeft}=useMemo(()=>weeklyPoll(),[]);
+  const key="rl-poll-"+poll.id;
+  const[vote,setVote]=useState("");
+  useEffect(()=>{try{setVote(localStorage.getItem(key)||"")}catch{}},[key]);
+  const choose=(id:string)=>{setVote(id);try{if(id)localStorage.setItem(key,id);else localStorage.removeItem(key)}catch{}};
+  return {poll,daysLeft,vote,choose};
+}
+type PollState=ReturnType<typeof usePoll>;
+
+function PollBody({s,id}:{s:PollState;id:string}){
+  const{poll,daysLeft,vote,choose}=s;
+  const counts=poll.options.map(o=>o.votes+(o.id===vote?1:0)),total=counts.reduce((a,b)=>a+b,0),top=Math.max(...counts);
+  return <>
+    <h2 id={id}>{poll.question}</h2>
+    {vote?<ol className="poll-results" aria-live="polite">{poll.options.map((o,i)=>{const pct=Math.round(counts[i]/total*100);return <li key={o.id} className={`${o.id===vote?"mine":""} ${counts[i]===top?"lead":""}`}><div><span><span aria-hidden="true">{o.emoji}</span> {o.label}{o.id===vote&&<em>Tu voto</em>}</span><b>{pct}%</b></div><i style={{width:pct+"%"}}/></li>})}</ol>
+    :<div className="poll-options">{poll.options.map(o=><button key={o.id} onClick={()=>choose(o.id)}><span aria-hidden="true">{o.emoji}</span>{o.label}</button>)}</div>}
+    <footer>{vote?<button onClick={()=>choose("")}><RotateCcw/> Cambiar mi voto</button>:<span>Sin registro · ves resultados al votar</span>}<span><Clock3/> Nueva pregunta en {daysLeft} {daysLeft===1?"día":"días"}</span></footer>
+    <p className="poll-note">Demo: conteo inicial de ejemplo; tu voto se guarda en este dispositivo.</p>
+  </>
+}
+
+function WeeklyPoll({s,cardRef}:{s:PollState;cardRef:RefObject<HTMLElement|null>}){
+  const total=s.poll.options.reduce((a,o)=>a+o.votes,0)+(s.vote?1:0);
+  return <aside ref={cardRef} className="poll-card" aria-labelledby="poll-question">
+    <div className="poll-top"><span className="poll-label"><Vote/> Encuesta de la semana</span><small>{s.vote?`${total} votos`:"Vota con un clic"}</small></div>
+    <PollBody s={s} id="poll-question"/>
+  </aside>
+}
+
+// Encuesta flotante: aparece cuando la del inicio sale de pantalla, para que siempre esté a la vista.
+function PollDock({s,show}:{s:PollState;show:boolean}){
+  const[open,setOpen]=useState(false);
+  return <div className={`poll-dock ${show?"show":""} ${open?"open":""}`} aria-hidden={!show}>
+    {open?<aside className="poll-card" aria-labelledby="poll-dock-question">
+      <div className="poll-top"><span className="poll-label"><Vote/> Encuesta de la semana</span><button className="poll-min" onClick={()=>setOpen(false)} aria-label="Minimizar encuesta" tabIndex={show?0:-1}><ChevronDown/></button></div>
+      <PollBody s={s} id="poll-dock-question"/>
+    </aside>
+    :<button className="poll-pill" onClick={()=>setOpen(true)} tabIndex={show?0:-1}><Vote/><span><b>Encuesta<span className="pill-long"> de la semana</span></b><small>{s.vote?"Ver resultados":s.poll.question}</small></span>{!s.vote&&<i aria-hidden="true"/>}</button>}
+  </div>
+}
+
+function Newcomers({router}:{router:any}){return <section className="section newcomers"><div className="container">
+  <div className="section-head"><div><span className="eyebrow">Emprendiendo</span><h2>Recién abiertos, dales una probada</h2><p className="section-sub">Negocios con menos de 6 meses. Conoce quién está detrás y qué pedir.</p></div><span className="fiction-pill">Ejemplos ficticios</span></div>
+  <div className="newcomer-grid">{newcomers.map(n=><article key={n.id} className="newcomer-card" style={{"--tone":n.color} as any}>
+    <div className="newcomer-top"><span className="newcomer-emoji" aria-hidden="true">{n.emoji}</span><span className="new-badge"><Sparkles/> Nuevo · {n.opened}</span></div>
+    <div className="newcomer-body"><small>{n.kind} · {n.zone}</small><h3>{n.name}</h3><blockquote>“{n.story}”</blockquote><p className="newcomer-owner"><User/> {n.owner}</p><p className="newcomer-try"><b>Pídele:</b> {n.tryThis}</p></div>
+  </article>)}</div>
+  <div className="newcomer-cta"><div><b>¿Acabas de abrir tu negocio?</b><span>Queremos contar tu historia y echarte la mano a arrancar.</span></div><button className="btn dark" onClick={()=>go(router,"/para-negocios")}>Quiero aparecer <ArrowRight/></button></div>
+</div></section>}
+
+function TeamTops({router,favs,fav}:{router:any;favs:string[];fav:(x:string)=>void}){return <section className="section tops"><div className="container">
+  <div className="section-head"><div><span className="eyebrow">Selección del equipo</span><h2>Nuestros TOP</h2><p className="section-sub">Los escogimos nosotros, con nombre y razón. Pronto se sumarán los votos de la comunidad.</p></div></div>
+  <div className="tops-grid">{teamTops.map(t=>{const picks=t.picks.flatMap(p=>{const b=businesses.find(x=>x.id===p.id);return b?[{...p,b}]:[]}),lead=picks[0].b;return <article key={t.id} className="top-card">
+    <button className="top-cover" style={{backgroundImage:`linear-gradient(0deg,rgba(6,30,49,.9),rgba(6,30,49,.05) 65%),url("${lead.imageUrl}")`}} onClick={()=>go(router,"/negocio/"+lead.slug)} aria-label={`Ver perfil de ${lead.name}`}><span><Trophy/> TOP {picks.length}</span><h3>{t.title}</h3><small>{t.note}</small></button>
+    <ol>{picks.map(({b,why},i)=>{const favorite=favs.includes(b.id);return <li key={b.id}><span className="top-rank">{i+1}</span><div><button onClick={()=>go(router,"/negocio/"+b.slug)}>{b.name}</button><p>{why}</p><small><MapPin/> {b.zone}</small></div><button className={`top-fav ${favorite?"active":""}`} onClick={()=>fav(b.id)} aria-label={favorite?`Quitar ${b.name} de favoritos`:`Guardar ${b.name}`}><Heart fill={favorite?"currentColor":"none"}/></button></li>})}</ol>
+  </article>})}</div>
+  <p className="tops-note">Selección editorial de demostración: no es un ranking pagado ni de popularidad.</p>
+</div></section>}
 
 function Sponsored({router}:{router:any}){const ads=[businesses[0],businesses[2],businesses[4],businesses[6]];return <section className="sponsored-section"><div className="container"><div className="sponsored-head"><div><span className="ad-label">Ejemplo de anuncio</span><h2>Visibilidad para tu negocio</h2><p>Así se verían los espacios destacados. Ningún negocio ha contratado este lugar.</p></div><span className="sponsored-note"><ShieldCheck/> Presentación de demostración</span></div><div className="sponsored-grid">{ads.map(b=><button key={b.id} className={`sponsored-card ${b.cover}`} style={{backgroundImage:`linear-gradient(0deg,rgba(2,24,39,.88),rgba(2,24,39,.08)),url("${b.imageUrl}")`}} onClick={()=>go(router,"/negocio/"+b.slug)}><span className="paid-badge">Ubicación destacada · ejemplo</span><div><small>{categories.find(c=>c.id===b.categoryId)?.name}</small><h3>{b.name}</h3><p>{b.shortDescription}</p><b>Ver negocio <ArrowRight/></b></div></button>)}</div></div></section>}
 
-function RankedByCategory({router,favs,fav}:{router:any;favs:string[];fav:(x:string)=>void}){return <section className="ranked-section"><div className="container"><div className="ranked-intro"><span className="eyebrow">Negocios documentados</span><h2>Conoce los cuatro rubros</h2><p>Selección de ejemplos reales. El orden de negocios no representa una clasificación de popularidad.</p></div>{categories.map(c=>{const selected=businesses.filter(b=>b.categoryId===c.id);return <section className="rubric-row" key={c.id}><div className="rubric-heading"><span className="category-icon-small" style={{background:c.color}}>{(()=>{const I=iconMap[c.icon];return <I/>})()}</span><div><h3>{c.name}</h3><p>{selected.length} perfiles con fuente e imagen reales</p></div><button onClick={()=>go(router,"/categorias/"+c.slug)}>Ver rubro <ArrowRight/></button></div><div className="business-grid ranked-grid">{selected.map(b=><BusinessCard key={b.id} b={b} router={router} favorite={favs.includes(b.id)} fav={fav}/>)}</div></section>})}</div></section>}
 
 function BusinessCard({b,router,favorite,fav}:{b:Business;router:any;favorite:boolean;fav:(x:string)=>void}){const cat=categories.find(c=>c.id===b.categoryId)!;return <article className="business-card"><button className={`cover ${b.cover}`} style={{backgroundImage:`url("${b.imageUrl}")`}} onClick={()=>go(router,"/negocio/"+b.slug)} aria-label={`Ver perfil de ${b.name}`}><small>Imagen publicada · fuente en perfil</small></button><button className={`heart ${favorite?"active":""}`} onClick={()=>fav(b.id)} aria-label={favorite?`Quitar ${b.name} de favoritos`:`Guardar ${b.name}`}><Heart fill={favorite?"currentColor":"none"}/></button><div className="business-body"><span className="cat-label">{cat.name}</span><h3><button onClick={()=>go(router,"/negocio/"+b.slug)}>{b.name}</button></h3><p>{b.shortDescription}</p><div className="card-meta"><span><MapPin/> {b.zone}</span><span><small>Datos con fuente</small></span></div></div></article>}
 function PromoCard({p}:{p:any}){const business=businesses.find(b=>b.name===p.business);return <article className={`promo-card promo-${p.category}`}><div><span className="promo-demo">Promoción de ejemplo, no vigente</span><Tag/><h3>{p.title}</h3><p>{p.business}</p></div><footer><span>{p.valid}</span><small>Contenido ilustrativo, sin oferta comercial.</small>{business&&<a className="btn white" href={`/negocio/${business.slug}`}>Ver perfil <ArrowRight/></a>}</footer></article>}
