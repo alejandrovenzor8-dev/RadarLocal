@@ -1,5 +1,5 @@
 export type Category = { id:string; slug:string; name:string; icon:string; color:string };
-export type Business = { id:string; slug:string; name:string; categoryId:string; shortDescription:string; city:string; state:string; zone:string; rating:number|null; reviewCount:number; verified:boolean; featured:boolean; demoData:true; services:string[]; tags:string[]; sourceUrl:string; imageUrl:string; imageSource:string; cover:string };
+export type Business = { id:string; slug:string; name:string; categoryId:string; shortDescription:string; city:string; state:string; zone:string; rating:number|null; reviewCount:number; verified:boolean; featured:boolean; demoData:true; services:string[]; tags:string[]; sourceUrl:string; imageUrl:string; imageSource:string; cover:string; fictional?:boolean };
 
 // El orden de categorías viene del estudio del proyecto. Los negocios son ejemplos documentados, no un ranking propio.
 export const categories:Category[] = [
@@ -7,6 +7,8 @@ export const categories:Category[] = [
   {id:"realestate",slug:"inmobiliarias",name:"Inmobiliarias",icon:"House",color:"#2D6B8C"},
   {id:"events",slug:"salones-de-eventos",name:"Salones de eventos",icon:"PartyPopper",color:"#9563A9"},
   {id:"wine",slug:"vinos",name:"Vinos",icon:"Wine",color:"#8B3857"},
+  {id:"services",slug:"servicios",name:"Servicios",icon:"Wrench",color:"#C98A1E"},
+  {id:"auto",slug:"autos",name:"Autos",icon:"Car",color:"#3E6FA3"},
 ];
 
 const entries = [
@@ -20,9 +22,25 @@ const entries = [
   ["wine","Vinos Encinillas","Valle de Encinillas","Vinos elaborados en el Valle de Encinillas, Chihuahua.","https://www.vinosencinillas.com/","/businesses/encinillas.jpg","https://forbes.com.mx/forbes-life/vinos-encinillas-referente-del-potencial-vitivinicola-de-chihuahua/","Vinos|Viñedo|Enoturismo"],
 ] as const;
 
-export const businesses:Business[] = entries.map((e,i)=>({
-  id:`${e[0]}-${i+1}`,slug:e[1].toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,""),name:e[1],categoryId:e[0],shortDescription:e[3],city:"Chihuahua",state:"Chihuahua",zone:e[2],rating:null,reviewCount:0,verified:false,featured:i%2===0,demoData:true,services:e[7].split("|"),tags:[categories.find(c=>c.id===e[0])!.name,e[1],...e[7].split("|")],sourceUrl:e[4],imageUrl:e[5],imageSource:e[6],cover:`cover-${e[0]}-${i%2+1}`
-}));
+// Negocios FICTICIOS para mostrar cómo se ven las categorías Servicios y Autos. No existen: no tienen fuente,
+// ubicación real ni aparecen en el mapa. Las imágenes son ilustraciones propias.
+const exampleEntries = [
+  ["services","Voltio Electricistas","Centro","Instalaciones, reparaciones eléctricas y atención de urgencias.","Instalaciones eléctricas|Reparación de cortos|Urgencias 24 h"],
+  ["services","AguaFix Fontanería","Zona norte","Fugas, destapes, calentadores y mantenimiento de tinacos.","Reparación de fugas|Destapes|Calentadores"],
+  ["services","FríoSur Climas","Zona sur","Instalación y mantenimiento de minisplits y refrigeración.","Minisplits|Mantenimiento|Refrigeración"],
+  ["services","Llave Maestra Cerrajería","San Felipe","Apertura de puertas, cambio de chapas y duplicado de llaves.","Apertura de puertas|Cambio de chapas|Duplicado de llaves"],
+  ["auto","Pistón Taller Mecánico","Poniente","Afinación, frenos y suspensión con diagnóstico por computadora.","Afinación|Frenos|Suspensión"],
+  ["auto","Rueda Firme Llantera","Periférico de la Juventud","Llantas nuevas, alineación, balanceo y reparación de ponchaduras.","Llantas|Alineación y balanceo|Ponchaduras"],
+  ["auto","Brillo Total Autolavado","Distrito Uno","Lavado, detallado de interiores y pulido de carrocería.","Lavado|Detallado|Pulido"],
+] as const;
+
+const toSlug=(x:string)=>x.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
+
+export const businesses:Business[] = [...entries.map((e,i)=>({
+  id:`${e[0]}-${i+1}`,slug:toSlug(e[1]),name:e[1],categoryId:e[0],shortDescription:e[3],city:"Chihuahua",state:"Chihuahua",zone:e[2],rating:null,reviewCount:0,verified:false,featured:i%2===0,demoData:true as const,services:e[7].split("|"),tags:[categories.find(c=>c.id===e[0])!.name,e[1],...e[7].split("|")],sourceUrl:e[4],imageUrl:e[5],imageSource:e[6],cover:`cover-${e[0]}-${i%2+1}`
+})),...exampleEntries.map((e,j)=>{const i=entries.length+j;return {
+  id:`${e[0]}-${i+1}`,slug:toSlug(e[1]),name:e[1],categoryId:e[0],shortDescription:e[3],city:"Chihuahua",state:"Chihuahua",zone:e[2],rating:null,reviewCount:0,verified:false,featured:false,demoData:true as const,services:e[4].split("|"),tags:[categories.find(c=>c.id===e[0])!.name,e[1],...e[4].split("|")],sourceUrl:"",imageUrl:`/businesses/${toSlug(e[1])}.svg`,imageSource:"",cover:`cover-${e[0]}-${j%2+1}`,fictional:true
+}})];
 
 export const promotions=[
   {id:"p1",business:"Mochomos Chihuahua",title:"Una cena especial para descubrir",valid:"Ejemplo sin vigencia real",category:"food"},
@@ -70,8 +88,11 @@ export const teamTops=[
   {id:"vino",title:"Vino hecho en Chihuahua",note:"Para presumir lo de aquí.",picks:[{id:"wine-8",why:"Vinos del Valle de Encinillas, con viñedo para conocer."},{id:"wine-7",why:"Vinos de autor con visitas y catas en la bodega."}]},
 ];
 
-// Anuncios de restaurantes para la barra lateral del inicio (ejemplos, sin contrato real).
+// Anuncios para la barra lateral del inicio (ejemplos, sin contrato real).
 export const sideAds=[
   {id:"food-1",tagline:"Cocina sonorense de autor. Reserva tu mesa para este fin."},
   {id:"food-2",tagline:"Cortes, panadería y bar para tu próxima reunión."},
+  {id:"events-5",tagline:"Jardín, salón y terraza para tu próxima celebración."},
+  {id:"wine-7",tagline:"Visitas y catas en bodega todo el fin de semana."},
+  {id:"realestate-3",tagline:"Te ayudamos a comprar, vender o rentar tu casa."},
 ];
