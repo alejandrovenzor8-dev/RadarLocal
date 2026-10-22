@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "RadarLocal | Negocios de Chihuahua",
-  description: "Demo de negocios de Chihuahua en restaurantes, inmobiliarias, salones de eventos y vinos.",
+  description: "Demo de negocios de Chihuahua en comida y bebidas, inmobiliarias, salones de eventos y vinos.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",

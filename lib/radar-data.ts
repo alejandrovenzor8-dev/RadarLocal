@@ -1,14 +1,15 @@
-export type Category = { id:string; slug:string; name:string; icon:string; color:string };
-export type Business = { id:string; slug:string; name:string; categoryId:string; shortDescription:string; city:string; state:string; zone:string; rating:number|null; reviewCount:number; verified:boolean; featured:boolean; demoData:true; services:string[]; tags:string[]; sourceUrl:string; imageUrl:string; imageSource:string; cover:string; fictional?:boolean };
+export type Filter = { id:string; label:string };
+export type Category = { id:string; slug:string; name:string; icon:string; color:string; filters:Filter[] };
+export type Business = { id:string; slug:string; name:string; categoryId:string; shortDescription:string; city:string; state:string; zone:string; rating:number|null; reviewCount:number; verified:boolean; featured:boolean; demoData:true; services:string[]; tags:string[]; sourceUrl:string; imageUrl:string; imageSource:string; cover:string; filters:string[]; fictional?:boolean };
 
 // El orden de categorías viene del estudio del proyecto. Los negocios son ejemplos documentados, no un ranking propio.
 export const categories:Category[] = [
-  {id:"food",slug:"restaurantes",name:"Restaurantes",icon:"Utensils",color:"#C65B35"},
-  {id:"realestate",slug:"inmobiliarias",name:"Inmobiliarias",icon:"House",color:"#2D6B8C"},
-  {id:"events",slug:"salones-de-eventos",name:"Salones de eventos",icon:"PartyPopper",color:"#9563A9"},
-  {id:"wine",slug:"vinos",name:"Vinos",icon:"Wine",color:"#8B3857"},
-  {id:"services",slug:"servicios",name:"Servicios",icon:"Wrench",color:"#C98A1E"},
-  {id:"auto",slug:"autos",name:"Autos",icon:"Car",color:"#3E6FA3"},
+  {id:"food",slug:"restaurantes",name:"Comida y bebidas",icon:"Utensils",color:"#C65B35",filters:[{id:"familiar",label:"Familiar"},{id:"bares",label:"Bares"},{id:"cafes",label:"Cafés"}]},
+  {id:"realestate",slug:"inmobiliarias",name:"Inmobiliarias",icon:"House",color:"#2D6B8C",filters:[{id:"venta",label:"Venta"},{id:"renta",label:"Renta"},{id:"asesoria",label:"Asesoría"}]},
+  {id:"events",slug:"salones-de-eventos",name:"Salones de eventos",icon:"PartyPopper",color:"#9563A9",filters:[{id:"bodas",label:"Bodas"},{id:"sociales",label:"Eventos sociales"},{id:"banquetes",label:"Banquetes"}]},
+  {id:"wine",slug:"vinos",name:"Viñedos",icon:"Wine",color:"#8B3857",filters:[{id:"catas",label:"Catas"},{id:"visitas",label:"Visitas a bodega o viñedo"}]},
+  {id:"services",slug:"servicios",name:"Servicios",icon:"Wrench",color:"#C98A1E",filters:[{id:"electricidad",label:"Electricidad"},{id:"plomeria",label:"Plomería"},{id:"climas",label:"Climas"},{id:"cerrajeria",label:"Cerrajería"}]},
+  {id:"auto",slug:"autos",name:"Autos",icon:"Car",color:"#3E6FA3",filters:[{id:"mecanico",label:"Taller mecánico"},{id:"llantas",label:"Llantas"},{id:"lavado",label:"Autolavado"}]},
 ];
 
 const entries = [
@@ -34,19 +35,35 @@ const exampleEntries = [
   ["auto","Brillo Total Autolavado","Distrito Uno","Lavado, detallado de interiores y pulido de carrocería.","Lavado|Detallado|Pulido"],
 ] as const;
 
+// Filtros de tipo de cada negocio. En los reales solo se marca lo que dicen sus fuentes; el negocio puede ajustarlos desde su panel.
+const businessFilters:Record<string,string[]>={
+  "Great American Steakhouse Chihuahua":["bares"],
+  "CENTURY 21 Census":["venta","renta","asesoria"],"Five Bienes Raíces":["venta","asesoria"],
+  "Hacienda Ángeles":["bodas","sociales","banquetes"],"Campestre de Chihuahua":["bodas","sociales","banquetes"],
+  "Bodegas Pinesque":["catas","visitas"],"Vinos Encinillas":["visitas"],
+  "Voltio Electricistas":["electricidad"],"AguaFix Fontanería":["plomeria"],"FríoSur Climas":["climas"],"Llave Maestra Cerrajería":["cerrajeria"],
+  "Pistón Taller Mecánico":["mecanico"],"Rueda Firme Llantera":["llantas"],"Brillo Total Autolavado":["lavado"],
+};
+
 const toSlug=(x:string)=>x.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
 
 export const businesses:Business[] = [...entries.map((e,i)=>({
-  id:`${e[0]}-${i+1}`,slug:toSlug(e[1]),name:e[1],categoryId:e[0],shortDescription:e[3],city:"Chihuahua",state:"Chihuahua",zone:e[2],rating:null,reviewCount:0,verified:false,featured:i%2===0,demoData:true as const,services:e[7].split("|"),tags:[categories.find(c=>c.id===e[0])!.name,e[1],...e[7].split("|")],sourceUrl:e[4],imageUrl:e[5],imageSource:e[6],cover:`cover-${e[0]}-${i%2+1}`
+  id:`${e[0]}-${i+1}`,slug:toSlug(e[1]),name:e[1],categoryId:e[0],shortDescription:e[3],city:"Chihuahua",state:"Chihuahua",zone:e[2],rating:null,reviewCount:0,verified:false,featured:i%2===0,demoData:true as const,services:e[7].split("|"),tags:[categories.find(c=>c.id===e[0])!.name,e[1],...e[7].split("|")],sourceUrl:e[4],imageUrl:e[5],imageSource:e[6],cover:`cover-${e[0]}-${i%2+1}`,filters:businessFilters[e[1]]||[]
 })),...exampleEntries.map((e,j)=>{const i=entries.length+j;return {
-  id:`${e[0]}-${i+1}`,slug:toSlug(e[1]),name:e[1],categoryId:e[0],shortDescription:e[3],city:"Chihuahua",state:"Chihuahua",zone:e[2],rating:null,reviewCount:0,verified:false,featured:false,demoData:true as const,services:e[4].split("|"),tags:[categories.find(c=>c.id===e[0])!.name,e[1],...e[4].split("|")],sourceUrl:"",imageUrl:`/businesses/${toSlug(e[1])}.svg`,imageSource:"",cover:`cover-${e[0]}-${j%2+1}`,fictional:true
+  id:`${e[0]}-${i+1}`,slug:toSlug(e[1]),name:e[1],categoryId:e[0],shortDescription:e[3],city:"Chihuahua",state:"Chihuahua",zone:e[2],rating:null,reviewCount:0,verified:false,featured:false,demoData:true as const,services:e[4].split("|"),tags:[categories.find(c=>c.id===e[0])!.name,e[1],...e[4].split("|")],sourceUrl:"",imageUrl:`/businesses/${toSlug(e[1])}.svg`,imageSource:"",cover:`cover-${e[0]}-${j%2+1}`,filters:businessFilters[e[1]]||[],fictional:true
 }})];
 
-export const promotions=[
-  {id:"p1",business:"Mochomos Chihuahua",title:"Una cena especial para descubrir",valid:"Ejemplo sin vigencia real",category:"food"},
-  {id:"p2",business:"CENTURY 21 Census",title:"Asesoría para tu próxima propiedad",valid:"Ejemplo sin vigencia real",category:"realestate"},
-  {id:"p3",business:"Hacienda Ángeles",title:"Planea tu próximo evento",valid:"Ejemplo sin vigencia real",category:"events"},
-  {id:"p4",business:"Bodegas Pinesque",title:"Conoce el vino de Chihuahua",valid:"Ejemplo sin vigencia real",category:"wine"},
+// Cada promoción es semanal (sale en «Promociones de la semana» del inicio) o mensual (sale en la página de Promociones).
+export type PromoPeriod="semanal"|"mensual";
+export type Promotion={id:string;business:string;title:string;valid:string;category:string;period:PromoPeriod};
+export const promotions:Promotion[]=[
+  {id:"p1",business:"Mochomos Chihuahua",title:"Una cena especial para descubrir",valid:"Ejemplo sin vigencia real",category:"food",period:"semanal"},
+  {id:"p2",business:"CENTURY 21 Census",title:"Asesoría para tu próxima propiedad",valid:"Ejemplo sin vigencia real",category:"realestate",period:"semanal"},
+  {id:"p3",business:"Hacienda Ángeles",title:"Planea tu próximo evento",valid:"Ejemplo sin vigencia real",category:"events",period:"semanal"},
+  {id:"p4",business:"Bodegas Pinesque",title:"Conoce el vino de Chihuahua",valid:"Ejemplo sin vigencia real",category:"wine",period:"semanal"},
+  {id:"p5",business:"Great American Steakhouse Chihuahua",title:"Un platillo especial cada mes",valid:"Ejemplo sin vigencia real",category:"food",period:"mensual"},
+  {id:"p6",business:"Five Bienes Raíces",title:"Agenda tu asesoría de este mes",valid:"Ejemplo sin vigencia real",category:"realestate",period:"mensual"},
+  {id:"p7",business:"Vinos Encinillas",title:"El vino del mes",valid:"Ejemplo sin vigencia real",category:"wine",period:"mensual"},
 ];
 export const activity=[{day:"1 sep",visits:44,contacts:8},{day:"5 sep",visits:58,contacts:11},{day:"9 sep",visits:50,contacts:9},{day:"13 sep",visits:72,contacts:14},{day:"17 sep",visits:83,contacts:18},{day:"21 sep",visits:76,contacts:15},{day:"25 sep",visits:96,contacts:22},{day:"30 sep",visits:112,contacts:26}];
 
