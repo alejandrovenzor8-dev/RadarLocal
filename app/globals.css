@@ -319,6 +319,16 @@ body {
 .home-rest .newcomers{padding-bottom:0}
 .home-rest .tops{background:none}
 .home-rest .tops-grid,.home-rest .newcomer-grid{gap:16px}
+/* TOP compactos: portada del tamaño de la cintilla superior y solo el nombre de cada negocio */
+.top-card{border-radius:14px}
+.top-cover{min-height:142px;padding:12px 14px}
+.top-cover>span{font-size:9px;padding:4px 8px}.top-cover>span svg{width:12px;height:12px}
+.top-cover h3{font-size:17px;font-weight:700;margin:0;text-shadow:0 1px 6px #000a}
+.top-card ol{padding:2px 12px 4px}
+.top-card li{gap:10px;align-items:center;padding:8px 0}
+.top-rank{width:24px;height:24px;font-size:12px}
+.top-card li>div>button{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:block}
+.top-fav{width:28px;height:28px}.top-fav svg{width:14px;height:14px}
 .home-rest>.section:last-child{padding-bottom:64px}
 .home-side{grid-area:side;display:grid;gap:16px;padding:2px 2px 8px}
 .home-side .poll-card{padding:18px;border-radius:20px;box-shadow:0 12px 32px #073b6614}
@@ -353,21 +363,21 @@ body {
 .sponsored-strip .sponsored-head{margin-bottom:11px}
 .sponsored-strip .sponsored-head h2{font-size:22px;margin:4px 0 2px}
 .sponsored-strip .sponsored-head p{font-size:13px}
-.sponsored-strip .ad-label,.sponsored-strip .paid-badge{font-size:9px;padding:4px 7px}
-.sponsored-strip .sponsored-card,.sponsored-strip .sponsored-card:first-child{min-height:142px;padding:12px 14px;border-radius:14px;box-shadow:inset 0 -90px 70px #041521d9}
-.sponsored-strip .sponsored-card h3{font-size:18px;margin:3px 0}
-.sponsored-strip .sponsored-card p{font-size:12px;margin:0 0 6px;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
-.sponsored-strip .sponsored-card small{font-size:11px}
-.sponsored-strip .sponsored-card b{font-size:13px}
-.sponsored-strip .sponsored-card b svg{width:14px;height:14px}
+.sponsored-strip .ad-label,.sponsored-strip .paid-badge,.weekly-promos .paid-badge{font-size:9px;padding:4px 7px}
+.sponsored-strip .sponsored-card,.sponsored-strip .sponsored-card:first-child,.weekly-promos .sponsored-card,.weekly-promos .sponsored-card:first-child{min-height:142px;padding:12px 14px;border-radius:14px;box-shadow:inset 0 -90px 70px #041521d9}
+.sponsored-strip .sponsored-card h3,.weekly-promos .sponsored-card h3{font-size:18px;margin:3px 0}
+.sponsored-strip .sponsored-card p,.weekly-promos .sponsored-card p{font-size:12px;margin:0 0 6px;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.sponsored-strip .sponsored-card small,.weekly-promos .sponsored-card small{font-size:11px}
+.sponsored-strip .sponsored-card b,.weekly-promos .sponsored-card b{font-size:13px}
+.sponsored-strip .sponsored-card b svg,.weekly-promos .sponsored-card b svg{width:14px;height:14px}
 .sponsored-strip .sponsored-head{justify-content:flex-end}
 .sponsored-strip{background:transparent;color:inherit}.sponsored-strip .sponsored-note{color:#607485}
 /* Cintilla: que destaque la foto, solo el nombre del negocio */
-.sponsored-strip .sponsored-card,.sponsored-strip .sponsored-card:first-child{box-shadow:none;justify-content:space-between}
-.sponsored-strip .sponsored-card small,.sponsored-strip .sponsored-card p,.sponsored-strip .sponsored-card b{display:none}
-.sponsored-strip .sponsored-card h3{font-size:17px;font-weight:700;margin:0;text-shadow:0 1px 6px #000a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-.sponsored-strip .sponsored-card>div{width:100%}
-.sponsored-strip .paid-badge{font-size:8px;padding:3px 6px;letter-spacing:.08em;opacity:.92}
+.sponsored-strip .sponsored-card,.sponsored-strip .sponsored-card:first-child,.weekly-promos .sponsored-card,.weekly-promos .sponsored-card:first-child{box-shadow:none;justify-content:space-between}
+.sponsored-strip .sponsored-card small,.sponsored-strip .sponsored-card p,.sponsored-strip .sponsored-card b,.weekly-promos .sponsored-card small,.weekly-promos .sponsored-card p,.weekly-promos .sponsored-card b{display:none}
+.sponsored-strip .sponsored-card h3,.weekly-promos .sponsored-card h3{font-size:17px;font-weight:700;margin:0;text-shadow:0 1px 6px #000a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.sponsored-strip .sponsored-card>div,.weekly-promos .sponsored-card>div{width:100%}
+.sponsored-strip .paid-badge,.weekly-promos .paid-badge{font-size:8px;padding:3px 6px;letter-spacing:.08em;opacity:.92}
 
 /* Inicio en escritorio: la barra lateral flota a la derecha. Cada bloque de la izquierda es su propio
    contexto de formato (flow-root), así que se angosta mientras la barra está a su lado y, en cuanto
@@ -440,6 +450,25 @@ body {
 .weekly-promos .paid-badge{display:inline-flex;align-items:center;gap:6px}
 .weekly-promos .paid-badge svg{width:13px;height:13px}
 .weekly-promos .sponsored-head .btn{flex:none}
+/* Sin fondo oscuro: se ve el fondo de la página y el encabezado va en negro */
+.weekly-promos{background:transparent;color:#172333}
+/* Dentro de la columna principal del inicio: sin el ancho ni el relleno de sección completa */
+.home-rest .weekly-promos{padding:24px 0 8px}
+.home-rest .weekly-promos .container{width:auto;margin:0}
+.weekly-promos .sponsored-head h2{color:#172333}
+.weekly-promos .sponsored-head p{color:#3f5263}
+.weekly-promos .sponsored-head h2,.weekly-promos .sponsored-head p{text-shadow:0 0 2px #f7f9fc,0 0 6px #f7f9fc,0 0 12px #f7f9fc}
+.weekly-promos .sponsored-head .btn.white{border:1px solid #cedbe3;box-shadow:0 6px 18px #073b6614}
+/* Gancho de la oferta (2×1, % de descuento) en tarjetas de promoción */
+.weekly-promos .sponsored-card{position:relative}
+.deal-badge{position:absolute;top:14px;right:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:86px;padding:10px 12px;border-radius:16px;background:#e8432f;color:#fff;box-shadow:0 10px 24px #0005;transform:rotate(4deg);line-height:1;z-index:3}
+.weekly-promos .paid-badge{max-width:calc(100% - 80px)}
+.weekly-promos .deal-badge{top:10px;right:10px;min-width:62px;padding:6px 9px;border-radius:12px}
+.weekly-promos .deal-badge strong{font-size:22px}
+.weekly-promos .deal-badge em{font-size:8px;margin-top:2px}
+.deal-badge strong{font-size:34px;font-weight:950;letter-spacing:-.03em}
+.deal-badge em{font-style:normal;font-size:11px;font-weight:850;text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
+.deal-badge.inline{position:static;align-self:flex-start;transform:none;margin:10px 0 4px;box-shadow:none}
 /* Panel de negocio · Planes: tres niveles y tabla comparativa */
 .plans-page{display:grid;gap:22px;max-width:1120px}
 .plans-page .plans{grid-template-columns:repeat(3,minmax(0,1fr));max-width:none;align-items:stretch}
@@ -528,3 +557,203 @@ body {
 .promo-group-head p{margin:0;color:#68798b}
 .promo-period{margin:16px 0}
 .promo-period .filter-chips label svg{width:15px;height:15px}
+
+/* Cintilla superior como carrusel: 4 tarjetas visibles del mismo tamaño y flechas para ver la de "Tu negocio aquí" */
+.strip-carousel{position:relative}
+.strip-carousel .carousel-track{display:grid;grid-template-columns:none;grid-auto-flow:column;gap:16px;grid-auto-columns:calc((100% - (var(--cols,4) - 1)*16px)/var(--cols,4));overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.strip-carousel .carousel-track::-webkit-scrollbar{display:none}
+.strip-carousel .carousel-track>*{scroll-snap-align:start}
+.strip-slot{min-height:142px;border-radius:14px;justify-content:center;padding:14px 16px}
+.strip-slot>svg{width:22px;height:22px}
+.strip-arrow{position:absolute;top:50%;z-index:4;width:36px;height:36px;margin-top:-18px;border-radius:50%;border:1px solid #dce6eb;background:#fff;color:#073b66;display:grid;place-items:center;box-shadow:0 6px 18px #073b6626;cursor:pointer;transition:.2s}
+.strip-arrow svg{width:18px;height:18px}
+.strip-arrow.prev{left:-18px}.strip-arrow.next{right:-18px}
+.strip-arrow:hover{background:#edf4f8}
+.strip-arrow:disabled{opacity:0;pointer-events:none}
+@media(max-width:1050px){.strip-carousel .carousel-track{grid-auto-columns:calc((100% - 16px)/2)}}
+@media(max-width:760px){.strip-carousel .carousel-track{grid-auto-columns:85%}.strip-arrow.prev{left:-6px}.strip-arrow.next{right:-6px}}
+
+/* Bloque "RadarLocal para negocios" del inicio: versión compacta, aprox. la mitad de alto */
+.for-business.compact .business-cta{padding-top:30px;padding-bottom:30px;gap:48px}
+.for-business.compact h2{font-size:28px;margin-top:4px}
+.for-business.compact .business-cta>div>p{font-size:15px;line-height:1.45;margin:6px 0 0}
+.for-business.compact .benefit-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 16px;margin:16px 0;font-size:14px}
+.for-business.compact .benefit-grid svg{width:16px;height:16px}
+.for-business.compact .owner-preview{min-height:0;padding:18px 22px;border-radius:18px}
+.for-business.compact .owner-preview>span{font-size:13px}
+.for-business.compact .owner-preview>b{font-size:36px;margin-top:6px;line-height:1.1}
+.for-business.compact .owner-preview>small{font-size:12px}
+.for-business.compact .bars{height:60px;margin-top:12px;gap:7px}
+.for-business.compact .owner-preview p{margin:6px 0 0;font-size:11px}
+@media(max-width:760px){.for-business.compact .benefit-grid{grid-template-columns:1fr 1fr}}
+
+/* Buscador del inicio (escritorio): aprox. 30% menos alto */
+@media(min-width:761px){
+.home-layout>.home-hero{padding:26px 36px 24px}
+.home-hero .hello{padding:5px 12px;font-size:13px}
+.home-hero h1{font-size:clamp(36px,4vw,50px);margin:12px 0 8px}
+.home-hero-copy>p{font-size:16px;margin:0 0 14px}
+.cravings{gap:8px}
+.cravings button{padding:7px 13px 7px 10px;font-size:14px}
+.cravings button span{font-size:17px}
+.soft-search{margin-top:14px;padding:3px 3px 3px 12px}
+.soft-search input{padding:7px 0}
+.soft-search button{width:34px;height:34px}
+.no-signup{margin-top:8px;font-size:12px}
+}
+
+/* Recién abiertos en carrusel: espacio para la sombra y el salto al pasar el cursor; la invitación es la última tarjeta */
+.newcomers .carousel-track{padding:6px 0 14px;margin:-6px 0 -14px}
+.newcomer-slot{margin-top:0;flex-direction:column;align-items:flex-start;justify-content:center;gap:12px;border-radius:22px;padding:24px}
+.newcomer-slot>svg{width:28px;height:28px;color:#c65b35}
+.newcomer-slot b{font-size:18px;color:#172333}
+.sponsored-strip .sponsored-head:empty{display:none}
+/* Anuncios laterales en carrusel vertical: 2 visibles y flechas arriba/abajo */
+.strip-carousel.vertical .carousel-track{display:grid;grid-template-columns:100%;grid-auto-flow:row;grid-auto-rows:max-content;grid-auto-columns:auto;gap:12px;height:var(--h,auto);overflow-x:hidden;overflow-y:auto;scroll-snap-type:y mandatory;padding:4px 0;margin:-4px 0}
+.strip-carousel.vertical .strip-arrow{left:50%;right:auto;margin:0 0 0 -18px}
+.strip-carousel.vertical .strip-arrow.prev{top:-18px}
+.strip-carousel.vertical .strip-arrow.next{top:auto;bottom:-18px}
+@media(max-width:760px){
+.strip-carousel.vertical .strip-arrow{display:none}
+.strip-carousel.vertical .carousel-track{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:78%;height:auto;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;margin:0 -14px;padding:2px 14px 6px}
+}
+@media(max-width:760px){.side-ads{display:block;overflow:visible;margin:0;padding:0}}
+
+/* Eventos: misma base que Promociones, con acento morado (color de Salones de eventos) para que se reconozca como agenda. */
+.events-page{--ev:#9563a9}
+.btn.event{background:var(--ev,#9563a9);color:#fff}
+.btn.event:hover:not(:disabled){background:color-mix(in srgb,var(--ev,#9563a9) 85%,#000)}
+.events-page .eyebrow{color:var(--ev);display:inline-flex;align-items:center;gap:6px}
+.events-page .eyebrow svg{width:16px;height:16px}
+.events-title{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap}
+.events-title .lead b{color:var(--ev)}
+.events-title>.btn{flex:none;margin:0 0 18px}
+.event-filters{background:#fff;border:1px solid #dce6eb;border-radius:18px;padding:12px;display:grid;grid-template-columns:minmax(0,1fr) 220px auto;gap:10px;align-items:center;margin:28px 0 14px;box-shadow:0 8px 24px #073b660d}
+.event-search{display:flex;align-items:center;gap:10px;border:1px solid #dce6eb;border-radius:12px;padding:0 6px 0 14px;height:46px;background:#fff}
+.event-search:focus-within{border-color:var(--ev)}
+.event-search>svg{width:18px;height:18px;color:#68798b;flex:none}
+.event-search input{flex:1;min-width:0;border:0;outline:0;padding:0;height:100%;background:none}
+.event-search button{border:0;background:#f1f5f7;border-radius:50%;width:30px;height:30px;display:grid;place-items:center;color:#526477;flex:none}
+.event-search button svg{width:15px;height:15px}
+.event-filters select{height:46px;padding:0 12px;border-radius:12px;border-color:#dce6eb;width:100%}
+.event-status{display:flex;gap:4px;background:#f1f5f7;border-radius:12px;padding:4px}
+.event-status button{flex:1;border:0;background:none;padding:9px 14px;border-radius:9px;font-weight:750;color:#526477;white-space:nowrap;cursor:pointer}
+.event-status button.on{background:#fff;color:var(--ev);box-shadow:0 2px 8px #073b661a}
+.event-count{display:flex;justify-content:space-between;align-items:center;gap:10px;color:#68798b;font-size:14px;margin:0 0 16px}
+.event-count button{border:0;background:none;color:var(--ev);font-weight:750;display:inline-flex;align-items:center;gap:5px;cursor:pointer}
+.event-count button svg{width:15px;height:15px}
+.event-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.event-card{background:#fff;border:1px solid #dce6eb;border-radius:20px;overflow:hidden;display:flex;flex-direction:column;transition:.2s}
+.event-card:hover{transform:translateY(-3px);box-shadow:0 16px 34px #073b661a}
+.event-card.skeleton{min-height:420px;background:linear-gradient(90deg,#eef3f6,#f7f9fc,#eef3f6);background-size:200% 100%;animation:event-shimmer 1.2s infinite linear}
+@keyframes event-shimmer{to{background-position:-200% 0}}
+.event-cover{position:relative;height:190px;background-color:#3b2a4a;background-size:cover;background-position:center;flex:none}
+.event-tag{position:absolute;left:14px;top:14px;display:inline-flex;align-items:center;gap:5px;background:var(--ev,#9563a9);color:#fff;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.09em;padding:6px 9px;border-radius:7px}
+.event-tag svg{width:13px;height:13px}
+.event-date-tile{position:absolute;right:14px;top:14px;background:#fff;border-radius:14px;min-width:58px;text-align:center;overflow:hidden;box-shadow:0 10px 24px #0004;transform:rotate(3deg)}
+.event-date-tile em{display:block;background:var(--ev,#9563a9);color:#fff;font-style:normal;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;padding:4px 6px}
+.event-date-tile strong{display:block;font-size:24px;font-weight:950;color:#172333;padding:2px 6px 4px}
+.event-cat{position:absolute;left:14px;bottom:12px;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;gap:6px}
+.event-cat i{width:9px;height:9px;border-radius:50%;background:var(--cat);box-shadow:0 0 0 2px #fff}
+.event-body{padding:18px 20px 20px;display:flex;flex-direction:column;flex:1}
+.event-body h3{margin:0 0 12px;font-size:19px;line-height:1.25;letter-spacing:-.01em}
+.event-meta{list-style:none;margin:0;padding:0;display:grid;gap:8px;color:#526477;font-size:14px}
+.event-meta li{display:flex;gap:8px;align-items:flex-start}
+.event-meta svg{width:16px;height:16px;color:var(--ev,#9563a9);flex:none;margin-top:2px}
+.event-meta .cap::first-letter{text-transform:uppercase}
+.event-body footer{margin-top:auto;padding-top:18px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.event-body footer .btn{margin:0}
+.event-mode{font-size:12px;font-weight:800;padding:5px 10px;border-radius:99px;background:#f3ecf6;color:#76518e}
+.event-mode.virtual{background:#e7f7f8;color:#077f84}
+.event-card.past .event-cover{filter:grayscale(.75)}
+.event-card.past .event-tag{background:#526477}
+.event-card.past .event-date-tile em{background:#68798b}
+.event-modal{background:#fff;width:min(560px,100%);max-height:90vh;overflow:auto;border-radius:24px;position:relative}
+.event-modal .event-cover{height:220px}
+.event-modal .close{display:grid;place-items:center;z-index:1}
+.event-modal .event-date-tile{top:auto;bottom:14px}
+.event-modal-body{padding:22px 26px 26px}
+.event-modal-body h2{margin:0 0 8px;font-size:26px;letter-spacing:-.02em}
+.event-modal-body>p{color:#526477;line-height:1.6;margin:0 0 18px}
+.event-modal-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;align-items:center}
+.event-modal-actions .btn{margin:0;width:auto}
+.event-closed{color:#68798b;font-weight:700}
+.event-editor{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:20px;margin-top:8px;align-items:start}
+.event-editor .form-panel{border-top:4px solid var(--ev)}
+.event-editor-head{display:flex;justify-content:space-between;align-items:center}
+.event-editor-head h3{display:flex;align-items:center;gap:8px;margin:0}
+.event-editor-head h3 svg{color:var(--ev)}
+.event-editor-head .close{position:static;display:grid;place-items:center}
+.event-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.event-row label{margin:10px 0}
+.event-error{color:#c0392b!important;font-weight:700;font-size:13px;margin:0}
+.event-editor .form-panel .btn{margin-top:8px}
+.event-preview{position:sticky;top:20px}
+.event-preview h3{margin-top:0}
+.event-preview .event-card:hover{transform:none;box-shadow:none}
+.event-preview .event-body footer .btn{pointer-events:none}
+.menu-list hr{border:0;border-top:1px solid #e7edf2;margin:4px 6px}
+.menu-list button.active{background:#f3ecf6;color:#76518e}
+.mobile-nav button.active{color:#073b66;font-weight:800}
+.mobile-nav button.active svg{color:#10bfc4}
+@media(max-width:1050px){.event-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.event-filters{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.event-search{grid-column:1/-1}.event-editor{grid-template-columns:minmax(0,1fr)}.event-preview{position:static;max-width:420px}}
+@media(max-width:760px){.event-grid,.event-filters{grid-template-columns:minmax(0,1fr)}.events-title>.btn{width:100%;margin:0 0 6px}.event-row{grid-template-columns:minmax(0,1fr);gap:0}.event-modal-body{padding:18px 20px 22px}.event-modal-actions .btn{flex:1}.event-preview{max-width:none}.mobile-nav button{min-width:0;flex:1}}
+
+/* Para negocios: planes públicos, plan Eventos, espacios publicitarios y contacto comercial. */
+.for-business.full{min-height:0;padding:90px 0}
+.business-cta-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.business-cta-actions .btn{margin-top:0}
+.for-business .business-cta-actions .btn.ghost{background:#ffffff1a;color:#fff}
+.pricing-page{padding:20px 0 100px}
+.pricing-block{padding-top:64px;scroll-margin-top:var(--topbar-h,100px)}
+.pricing-head{max-width:720px;margin-bottom:26px}
+.pricing-head h2{font-size:38px;letter-spacing:-.035em;margin:8px 0 8px}
+.pricing-head p{margin:0;color:#68798b;line-height:1.55}
+.pricing-head .eyebrow{display:inline-flex;align-items:center;gap:6px}
+.pricing-head .eyebrow svg{width:16px;height:16px}
+.pricing-page .plans-page{max-width:none}
+.pricing-page .plan .btn,.ad-plan .btn{margin-top:0}
+.event-plan-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:20px;align-items:stretch}
+.plan.event-plan{display:flex;flex-direction:column;position:relative;background:var(--ev);color:#fff;border-color:var(--ev)}
+.plan.event-plan>span:first-child{font-size:12px;font-weight:850;text-transform:uppercase;letter-spacing:.08em;color:#f0dcf7}
+.plan.event-plan h2{margin:12px 0 4px}
+.plan.event-plan .plan-tagline{color:#f0e6f5}
+.plan.event-plan ul{flex:1;margin:8px 0 18px}
+.plan.event-plan li{font-size:14px;line-height:1.4;margin:11px 0}
+.plan.event-plan li svg{flex:none;width:18px;height:18px;color:#ffd27a}
+.plan.event-plan .btn.white{align-self:flex-start;color:var(--ev)}
+.event-deal{display:flex;flex-direction:column;border-top:4px solid var(--ev)}
+.event-deal h3{display:flex;align-items:center;gap:8px;margin:0 0 6px;font-size:20px}
+.event-deal h3 svg{color:var(--ev)}
+.event-deal>p{color:#526477;margin:0 0 12px;line-height:1.5}
+.pack-list{list-style:none;padding:0;margin:0 0 12px;border:1px solid #e7edf2;border-radius:14px;overflow:hidden}
+.pack-list li{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;font-size:15px}
+.pack-list li+li{border-top:1px solid #e7edf2}
+.pack-list b{color:var(--ev);white-space:nowrap}
+.deal-note{font-size:13px!important;color:#68798b!important}
+.sales-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
+.sales-links .btn{margin:0;width:auto}
+.ad-plans{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;max-width:900px}
+.plan.ad-plan{display:flex;flex-direction:column}
+.ad-plan>span{font-size:12px;font-weight:850;text-transform:uppercase;letter-spacing:.08em;color:#077f84}
+.ad-plan h2{margin:8px 0 4px}
+.ad-plan ul{flex:1;margin:8px 0 18px}
+.ad-plan li{font-size:14px;margin:10px 0}
+.ad-plan li svg{flex:none;width:18px;height:18px}
+.ad-plan .btn{align-self:flex-start}
+.ad-preview{height:120px;border-radius:12px;background:#f1f5f7;border:1px solid #e1e8ed;margin-bottom:16px;padding:10px;display:grid;gap:8px}
+.ad-preview i{display:block;background:#dfe7ec;border-radius:6px}
+.ad-preview b,.ad-preview em{display:grid;place-items:center;border-radius:8px;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;font-style:normal}
+.ad-preview b{background:#ffb547;color:#513000}
+.ad-preview.horizontal{grid-template-rows:42px 1fr}
+.ad-preview.vertical{grid-template-columns:1fr 92px}
+.ad-preview.vertical div{display:grid;grid-template-rows:38px 1fr;gap:6px}
+.ad-preview.vertical em{background:#d6f3f4;color:#077f84;font-size:10px}
+.pricing-contact{margin-top:64px;background:#073b66;color:#fff;border-radius:24px;padding:30px 34px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.pricing-contact h2{margin:0 0 6px;font-size:26px}
+.pricing-contact p{margin:0;color:#c9dbe6}
+.pricing-contact .sales-links{margin-top:0}
+.pricing-contact .btn.event{background:#10bfc4;color:#052f51}
+.pricing-contact .btn.ghost{background:#ffffff1a;color:#fff}
+@media(max-width:1050px){.event-plan-grid,.ad-plans{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:760px){.for-business.full{padding:56px 0}.pricing-block{padding-top:48px}.pricing-head h2{font-size:30px}.sales-links .btn{flex:1 1 100%}.pricing-contact{padding:24px 20px}.ad-plan .btn,.plan.event-plan .btn.white{align-self:stretch}}

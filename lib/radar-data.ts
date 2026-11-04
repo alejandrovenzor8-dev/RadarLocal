@@ -55,15 +55,16 @@ export const businesses:Business[] = [...entries.map((e,i)=>({
 
 // Cada promoción es semanal (sale en «Promociones de la semana» del inicio) o mensual (sale en la página de Promociones).
 export type PromoPeriod="semanal"|"mensual";
-export type Promotion={id:string;business:string;title:string;valid:string;category:string;period:PromoPeriod};
+// deal: el gancho de la oferta (2×1, % de descuento, temporada) que se muestra en grande en la tarjeta.
+export type Promotion={id:string;business:string;title:string;valid:string;category:string;period:PromoPeriod;deal?:string;dealNote?:string};
 export const promotions:Promotion[]=[
-  {id:"p1",business:"Mochomos Chihuahua",title:"Una cena especial para descubrir",valid:"Ejemplo sin vigencia real",category:"food",period:"semanal"},
-  {id:"p2",business:"CENTURY 21 Census",title:"Asesoría para tu próxima propiedad",valid:"Ejemplo sin vigencia real",category:"realestate",period:"semanal"},
-  {id:"p3",business:"Hacienda Ángeles",title:"Planea tu próximo evento",valid:"Ejemplo sin vigencia real",category:"events",period:"semanal"},
-  {id:"p4",business:"Bodegas Pinesque",title:"Conoce el vino de Chihuahua",valid:"Ejemplo sin vigencia real",category:"wine",period:"semanal"},
-  {id:"p5",business:"Great American Steakhouse Chihuahua",title:"Un platillo especial cada mes",valid:"Ejemplo sin vigencia real",category:"food",period:"mensual"},
-  {id:"p6",business:"Five Bienes Raíces",title:"Agenda tu asesoría de este mes",valid:"Ejemplo sin vigencia real",category:"realestate",period:"mensual"},
-  {id:"p7",business:"Vinos Encinillas",title:"El vino del mes",valid:"Ejemplo sin vigencia real",category:"wine",period:"mensual"},
+  {id:"p1",business:"Mochomos Chihuahua",deal:"2×1",dealNote:"en cortes",title:"2×1 en cortes de martes a jueves",valid:"Martes a jueves",category:"food",period:"semanal"},
+  {id:"p2",business:"CENTURY 21 Census",deal:"10%",dealNote:"de descuento",title:"10% de descuento en el avalúo de tu propiedad",valid:"Esta semana",category:"realestate",period:"semanal"},
+  {id:"p3",business:"Hacienda Ángeles",deal:"30%",dealNote:"de temporada",title:"Temporada baja: 30% de descuento en eventos de noviembre",valid:"Por temporada",category:"events",period:"semanal"},
+  {id:"p4",business:"Bodegas Pinesque",deal:"2×1",dealNote:"en catas",title:"2×1 en catas de vino el fin de semana",valid:"Sábado y domingo",category:"wine",period:"semanal"},
+  {id:"p5",business:"Great American Steakhouse Chihuahua",title:"Un platillo especial cada mes",valid:"Todo el mes",category:"food",period:"mensual"},
+  {id:"p6",business:"Five Bienes Raíces",title:"Agenda tu asesoría de este mes",valid:"Todo el mes",category:"realestate",period:"mensual"},
+  {id:"p7",business:"Vinos Encinillas",title:"El vino del mes",valid:"Todo el mes",category:"wine",period:"mensual"},
 ];
 export const activity=[{day:"1 sep",visits:44,contacts:8},{day:"5 sep",visits:58,contacts:11},{day:"9 sep",visits:50,contacts:9},{day:"13 sep",visits:72,contacts:14},{day:"17 sep",visits:83,contacts:18},{day:"21 sep",visits:76,contacts:15},{day:"25 sep",visits:96,contacts:22},{day:"30 sep",visits:112,contacts:26}];
 
@@ -113,3 +114,30 @@ export const sideAds=[
   {id:"wine-7",tagline:"Visitas y catas en bodega todo el fin de semana."},
   {id:"realestate-3",tagline:"Te ayudamos a comprar, vender o rentar tu casa."},
 ];
+
+// Eventos de ejemplo: ningún negocio los ha publicado. Las fechas se calculan desde hoy para que siempre
+// haya eventos próximos y pasados que mostrar en la demo.
+export type EventMode="presencial"|"virtual";
+export type EventCategory={id:string;label:string;color:string};
+export type RadarEvent={id:string;title:string;description:string;category:string;start:string;end:string;mode:EventMode;location:string;organizer:string;imageUrl:string;price:string};
+export const eventCategories:EventCategory[]=[
+  {id:"musica",label:"Música",color:"#9563A9"},
+  {id:"gastronomia",label:"Gastronomía",color:"#C65B35"},
+  {id:"cultura",label:"Arte y cultura",color:"#2D6B8C"},
+  {id:"vino",label:"Vino y catas",color:"#8B3857"},
+  {id:"negocios",label:"Negocios",color:"#077F84"},
+  {id:"familiar",label:"Familiar",color:"#C98A1E"},
+];
+function daysFromNow(days:number,time:string){const d=new Date();d.setDate(d.getDate()+days);const p=(n:number)=>String(n).padStart(2,"0");return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${time}`}
+// Se llama en el navegador (no al cargar el módulo) para que la fecha de "hoy" sea la del visitante.
+export function mockEvents():RadarEvent[]{return [
+  {id:"e1",title:"Noche de jazz en la terraza",description:"Cuarteto de jazz en vivo con menú de temporada y coctelería de autor. Cupo limitado, se recomienda reservar.",category:"musica",start:daysFromNow(2,"20:00"),end:daysFromNow(2,"23:30"),mode:"presencial",location:"Mochomos Chihuahua · Distrito Uno",organizer:"Mochomos Chihuahua",imageUrl:"/businesses/mochomos.jpg",price:"Entrada libre con consumo"},
+  {id:"e2",title:"Cata de vinos chihuahuenses",description:"Recorrido por la bodega y cata guiada de cinco etiquetas locales con maridaje de quesos de la región.",category:"vino",start:daysFromNow(5,"17:00"),end:daysFromNow(5,"20:00"),mode:"presencial",location:"Vinos Encinillas · Valle de Encinillas",organizer:"Vinos Encinillas",imageUrl:"/businesses/encinillas.jpg",price:"$650 por persona"},
+  {id:"e3",title:"Expo Bodas Chihuahua",description:"Salón, banquete, música y decoración en un mismo lugar. Conoce proveedores y aprovecha descuentos exclusivos de la expo.",category:"negocios",start:daysFromNow(9,"11:00"),end:daysFromNow(9,"19:00"),mode:"presencial",location:"Hacienda Ángeles · Zona Aeropuerto",organizer:"Hacienda Ángeles",imageUrl:"/businesses/hacienda-angeles.jpg",price:"Gratis con registro"},
+  {id:"e4",title:"Taller en línea: cómo vender tu casa más rápido",description:"Asesores inmobiliarios comparten cómo fijar el precio, preparar la propiedad y negociar. Sesión de preguntas al final.",category:"negocios",start:daysFromNow(12,"19:00"),end:daysFromNow(12,"20:30"),mode:"virtual",location:"Transmisión en vivo por Zoom",organizer:"CENTURY 21 Census",imageUrl:"/businesses/century21.jpg",price:"Gratis"},
+  {id:"e5",title:"Domingo de pícnic familiar",description:"Juegos para niños, música acústica y canastas de pícnic. Trae tu manta y disfruta la tarde al aire libre.",category:"familiar",start:daysFromNow(16,"12:00"),end:daysFromNow(16,"18:00"),mode:"presencial",location:"Campestre de Chihuahua",organizer:"Campestre de Chihuahua",imageUrl:"/businesses/campestre.jpg",price:"$150 por familia"},
+  {id:"e6",title:"Festival gastronómico del norte",description:"Más de 20 cocinas locales, cerveza artesanal y concurso de carne asada. Música en vivo durante todo el día.",category:"gastronomia",start:daysFromNow(23,"13:00"),end:daysFromNow(23,"22:00"),mode:"presencial",location:"Great American Steakhouse · Periférico de la Juventud",organizer:"Great American Steakhouse Chihuahua",imageUrl:"/businesses/great-american.jpg",price:"$200 preventa"},
+  {id:"e7",title:"Exposición: Paisajes de la Sierra",description:"Muestra colectiva de fotografía sobre la Sierra Tarahumara con charla de los artistas en la inauguración.",category:"cultura",start:daysFromNow(-4,"18:00"),end:daysFromNow(-4,"21:00"),mode:"presencial",location:"Centro Histórico de Chihuahua",organizer:"Colectivo Sierra",imageUrl:"/brand/home-bg.jpg",price:"Entrada libre"},
+  {id:"e8",title:"Cata virtual: vinos del desierto",description:"El enólogo guía la cata de tres etiquetas desde la bodega. Al registrarte recibes el kit de vinos en casa.",category:"vino",start:daysFromNow(-9,"17:30"),end:daysFromNow(-9,"19:00"),mode:"virtual",location:"Transmisión en vivo por Google Meet",organizer:"Bodegas Pinesque",imageUrl:"/businesses/pinesque.jpg",price:"$890 con kit de vinos"},
+  {id:"e9",title:"Concierto acústico al atardecer",description:"Trío acústico con repertorio de trova y rock en español entre los viñedos.",category:"musica",start:daysFromNow(-15,"19:00"),end:daysFromNow(-15,"22:00"),mode:"presencial",location:"Vinos Encinillas · Valle de Encinillas",organizer:"Vinos Encinillas",imageUrl:"/businesses/encinillas.jpg",price:"$350"},
+]}
