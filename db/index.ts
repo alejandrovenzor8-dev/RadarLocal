@@ -1,13 +1,22 @@
 import { env } from "cloudflare:workers";
-import { drizzle } from "drizzle-orm/d1";
-import * as schema from "./schema";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Client } from "pg";
+import * as schema from "./all-schema";
 
-export function getDb() {
-  if (!env.DB) {
-    throw new Error(
-      "Cloudflare D1 binding `DB` is unavailable. Set the `d1` field in .openai/hosting.json to `DB` or let your control plane inject the real binding values before using the database."
-    );
+function createDb(client: Client) {
+  return drizzle({ client, schema });
+}
+
+export type Database = ReturnType<typeof createDb>;
+
+export async function withDb<T>(run: (db: Database) => Promise<T>): Promise<T> {
+  const connectionString = env.HYPERDRIVE_FRESH?.connectionString ?? env.DATABASE_URL;
+  if (!connectionString) throw new Error("PostgreSQL no está configurado");
+  const client = new Client({ connectionString });
+  await client.connect();
+  try {
+    return await run(createDb(client));
+  } finally {
+    await client.end();
   }
-
-  return drizzle(env.DB, { schema });
 }

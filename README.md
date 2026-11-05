@@ -1,5 +1,7 @@
 # RadarLocal
 
+**ProductivoV2 (Fase 1):** backend de PostgreSQL con Drizzle, Better Auth y servicios de autorización/moderación preparados para Cloudflare Workers directo. La interfaz visible sigue siendo una demo y aún no consume estos servicios. La configuración, comandos locales, migraciones y pendientes actuales están en [docs/FASE1_INFRA.md](docs/FASE1_INFRA.md). Los apartados de Sites/D1 que siguen documentan el origen del prototipo y no describen la arquitectura objetivo de esta rama.
+
 Demo responsive del directorio RadarLocal con ocho perfiles reales documentados en cuatro rubros, en el orden de popularidad del estudio del proyecto: restaurantes, inmobiliarias, salones de eventos y vinos. Incluye búsqueda, filtros, mapa interactivo de Google, favoritos persistentes, acceso simulado, panel de negocio, catálogo, promociones de ejemplo y analítica simulada.
 
 Ejecuta `npm install` y `npm run dev`. Accesos: `cliente@radarlocal.mx` / `DemoCliente2026!` y `negocio@radarlocal.mx` / `DemoNegocio2026!`.

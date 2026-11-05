@@ -1,0 +1,6 @@
+# Copia a .dev.vars para desarrollo local. Nunca subas credenciales reales.
+DATABASE_URL="postgresql://usuario:clave@127.0.0.1:5432/radarlocal_dev"
+BETTER_AUTH_SECRET="generar_valor_aleatorio_de_al_menos_32_caracteres"
+BETTER_AUTH_URL="http://localhost:5173"
+# RESEND_API_KEY="clave_del_proveedor_de_correo"
+# EMAIL_FROM="correo_verificado_del_proveedor"
