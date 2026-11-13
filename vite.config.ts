@@ -13,6 +13,9 @@ const localBindingConfig = {
   hyperdrive: process.env.RADAR_HYPERDRIVE_ID
     ? [{ binding: "HYPERDRIVE_FRESH", id: process.env.RADAR_HYPERDRIVE_ID }]
     : [],
+  r2_buckets: process.env.RADAR_R2_BUCKET_NAME
+    ? [{ binding: "BUCKET", bucket_name: process.env.RADAR_R2_BUCKET_NAME }]
+    : [],
 };
 
 export default defineConfig(async () => {

@@ -92,3 +92,16 @@ test("dos aprobaciones simultáneas resuelven una sola solicitud", async () => {
     await secondClient.end();
   }
 });
+
+test("el rechazo conserva la versión pública y registra el motivo", async () => {
+  const [before] = await db.select({ version: schema.businessPublications.version }).from(schema.businessPublications).where(eq(schema.businessPublications.businessId, businessId));
+  await saveBusinessDraft(db, owner, businessId, { ...snapshot(), description: "Corrección propuesta que requiere revisión" });
+  const submitted = await submitBusinessDraft(db, owner, businessId);
+  await expect(decideBusinessChange(db, admin, submitted.requestId, "RECHAZADA")).rejects.toMatchObject({ status: 400 });
+  const rejected = await decideBusinessChange(db, admin, submitted.requestId, "RECHAZADA", "Información sin verificar");
+  expect(rejected.decision).toBe("RECHAZADA");
+  const [after] = await db.select({ version: schema.businessPublications.version }).from(schema.businessPublications).where(eq(schema.businessPublications.businessId, businessId));
+  expect(after.version).toBe(before.version);
+  const [decision] = await db.select().from(schema.reviewDecisions).where(eq(schema.reviewDecisions.requestId, submitted.requestId));
+  expect(decision.reason).toBe("Información sin verificar");
+});

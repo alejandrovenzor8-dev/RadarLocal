@@ -15,6 +15,34 @@
       "when": 1793823152231,
       "tag": "0001_public_shadowcat",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794177321492,
+      "tag": "0002_flawless_crusher_hogan",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1794177862991,
+      "tag": "0003_high_silver_sable",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794178105979,
+      "tag": "0004_swift_tenebrous",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1794180114130,
+      "tag": "0005_cuddly_lionheart",
+      "breakpoints": true
     }
   ]
 }

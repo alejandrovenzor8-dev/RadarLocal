@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "subscriptions_one_active_uq" ON "subscriptions" USING btree ("business_id") WHERE "subscriptions"."status" = 'ACTIVA';

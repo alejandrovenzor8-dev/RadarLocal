@@ -22,3 +22,10 @@ export async function PUT(request: Request, context: Context) {
   try { body = await request.json(); } catch { return Response.json({ error: "JSON inválido" }, { status: 400 }); }
   return withPrincipal(request, async (db, principal) => Response.json(await saveBusinessDraft(db, principal, id, body)));
 }
+export async function PATCH(request: Request, context: Context) {
+  const { id } = await context.params;
+  if (!z.string().uuid().safeParse(id).success) return Response.json({ error: "ID inválido" }, { status: 400 });
+  let body: unknown;
+  try { body = await request.json(); } catch { return Response.json({ error: "JSON inválido" }, { status: 400 }); }
+  return withPrincipal(request, async (db, principal) => Response.json(await saveBusinessDraft(db, principal, id, body, true)));
+}

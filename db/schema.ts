@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { boolean, check, doublePrecision, index, integer, jsonb, pgEnum, pgTable, primaryKey, text, time, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { type AnyPgColumn, boolean, check, doublePrecision, index, integer, jsonb, pgEnum, pgTable, primaryKey, text, time, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { user } from "./auth-schema";
 
 export const role = pgEnum("radar_role", ["SUPER_ADMIN", "ADMIN", "BUSINESS_OWNER", "CUSTOMER"]);
@@ -31,10 +31,11 @@ export const cities = pgTable("cities", {
 }, table => [uniqueIndex("cities_state_slug_uq").on(table.stateId, table.slug)]);
 export const categories = pgTable("categories", {
   id: uuid("id").primaryKey().defaultRandom(),
+  parentId: uuid("parent_id").references((): AnyPgColumn => categories.id),
   slug: text("slug").notNull().unique(),
   name: text("name").notNull(),
   status: configurationStatus("status").notNull().default("PENDIENTE_CONFIGURACION"),
-});
+}, table => [index("categories_parent_idx").on(table.parentId), check("categories_not_self_chk", sql`${table.parentId} IS NULL OR ${table.parentId} <> ${table.id}`)]);
 
 export const businesses = pgTable("businesses", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -44,6 +45,7 @@ export const businesses = pgTable("businesses", {
   cityId: uuid("city_id").references(() => cities.id),
   status: configurationStatus("status").notNull().default("PENDIENTE_CONFIGURACION"),
   verification: verificationStatus("verification").notNull().default("PENDIENTE_VERIFICACION"),
+  suspendedAt: timestamp("suspended_at", { withTimezone: true }),
   sourceUrl: text("source_url"),
   sourceNotes: text("source_notes"),
   sourceCheckedAt: timestamp("source_checked_at", { withTimezone: true }),
@@ -97,13 +99,16 @@ export const mediaAssets = pgTable("media_assets", {
   id: uuid("id").primaryKey().defaultRandom(),
   businessId: uuid("business_id").references(() => businesses.id, { onDelete: "cascade" }),
   storageKey: text("storage_key"),
+  mimeType: text("mime_type"),
+  byteSize: integer("byte_size"),
+  uploadedBy: text("uploaded_by").references(() => user.id),
   sourceUrl: text("source_url"),
   altText: text("alt_text"),
   kind: text("kind").notNull(),
   rights: rightsStatus("rights").notNull().default("PENDIENTE"),
   position: integer("position").notNull().default(0),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-}, table => [index("media_assets_business_idx").on(table.businessId)]);
+}, table => [index("media_assets_business_idx").on(table.businessId), uniqueIndex("media_assets_storage_key_uq").on(table.storageKey), check("media_assets_byte_size_chk", sql`${table.byteSize} IS NULL OR ${table.byteSize} BETWEEN 1 AND 10485760`)]);
 
 export const businessRevisions = pgTable("business_revisions", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -184,7 +189,7 @@ export const subscriptions = pgTable("subscriptions", {
   startsAt: timestamp("starts_at", { withTimezone: true }),
   endsAt: timestamp("ends_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-}, table => [index("subscriptions_business_idx").on(table.businessId, table.status), check("subscriptions_dates_chk", sql`${table.endsAt} IS NULL OR ${table.startsAt} IS NULL OR ${table.endsAt} > ${table.startsAt}`)]);
+}, table => [index("subscriptions_business_idx").on(table.businessId, table.status), uniqueIndex("subscriptions_one_active_uq").on(table.businessId).where(sql`${table.status} = 'ACTIVA'`), check("subscriptions_dates_chk", sql`${table.endsAt} IS NULL OR ${table.startsAt} IS NULL OR ${table.endsAt} > ${table.startsAt}`)]);
 
 export const platformSettings = pgTable("platform_settings", {
   key: text("key").primaryKey(),

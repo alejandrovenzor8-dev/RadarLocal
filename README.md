@@ -1,16 +1,18 @@
 # RadarLocal
 
-**ProductivoV2 (Fase 1):** backend de PostgreSQL con Drizzle, Better Auth y servicios de autorización/moderación preparados para Cloudflare Workers directo. La interfaz visible sigue siendo una demo y aún no consume estos servicios. La configuración, comandos locales, migraciones y pendientes actuales están en [docs/FASE1_INFRA.md](docs/FASE1_INFRA.md). Los apartados de Sites/D1 que siguen documentan el origen del prototipo y no describen la arquitectura objetivo de esta rama.
+**ProductivoV2:** PostgreSQL con Drizzle, Better Auth y servicios de autorización y moderación preparados para Cloudflare Workers directo. [Infraestructura de Fase 1](docs/FASE1_INFRA.md). Los apartados históricos de Sites/D1 más abajo describen el origen del prototipo.
 
-Demo responsive del directorio RadarLocal con ocho perfiles reales documentados en cuatro rubros, en el orden de popularidad del estudio del proyecto: restaurantes, inmobiliarias, salones de eventos y vinos. Incluye búsqueda, filtros, mapa interactivo de Google, favoritos persistentes, acceso simulado, panel de negocio, catálogo, promociones de ejemplo y analítica simulada.
+**Fase 2:** panel SUPER_ADMIN protegido en `/super-admin`. [Guía de acceso, funciones y pruebas](docs/FASE2_SUPER_ADMIN.md).
 
-Ejecuta `npm install` y `npm run dev`. Accesos: `cliente@radarlocal.mx` / `DemoCliente2026!` y `negocio@radarlocal.mx` / `DemoNegocio2026!`.
+**Fase 3:** panel de propietarios protegido en `/panel-negocio`, editor por pasos, solicitudes de revisión e integración privada de imágenes con R2. [Guía de propietarios y configuración](docs/FASE3_PROPIETARIOS.md).
 
-El mapa utiliza **Maps JavaScript API** y la clase **Place**: busca por nombre el perfil seleccionado y coloca un marcador cuando Google encuentra el lugar, sin guardar coordenadas inventadas. Para configurarlo, coloca una Maps Demo Key en `.env.local` como `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=...` y reinicia el servidor. Para una versión de producción utiliza una clave propia con Maps JavaScript API y Places API (New), restricciones de referente HTTP y facturación. La clave de navegador será visible en las peticiones del mapa; nunca uses aquí una clave privada. La ubicación sugerida por Google debe confirmarse antes de visitar.
+**Fase 4:** la interfaz pública consulta fichas, promociones y eventos aprobados en PostgreSQL. El acceso público usa Better Auth; no hay cuentas de demostración. [Guía del directorio y pruebas](docs/FASE4_DIRECTORIO.md).
 
-En `/mapa`, “Usar mi ubicación” solicita permiso al navegador, marca la posición del usuario en azul y ordena los perfiles encontrados por distancia en línea recta. La ubicación no se guarda ni se envía a RadarLocal; si se deniega el permiso, el directorio sigue funcionando. En producción, la geolocalización requiere HTTPS.
+Ejecuta `npm install`, configura PostgreSQL y las variables de `.dev.vars.example`, aplica `npm run db:migrate` y ejecuta `npm run dev`. Los negocios existentes son candidatos privados hasta verificación y aprobación. Los favoritos se guardan solo en este dispositivo; no conceden identidad ni permisos.
 
-La sesión, favoritos y ediciones usan `localStorage`; no es autenticación segura para producción. La capa se puede sustituir por Supabase o PostgreSQL con autenticación de servidor y políticas por rol. No hay claves privadas, pagos ni reservaciones reales. Las imágenes de sus fuentes documentadas se guardan en el proyecto; antes de una presentación pública o lanzamiento se debe obtener autorización para su uso comercial. Ver [DATA_SOURCES.md](DATA_SOURCES.md).
+El mapa utiliza solamente coordenadas vinculadas a ubicaciones verificadas. Opcionalmente, configura una clave propia y restringida en `NEXT_PUBLIC_RADAR_MAPS_KEY` para Maps JavaScript API. Sin clave se muestran direcciones y enlaces de coordenadas, sin búsqueda por nombre. La clave del navegador siempre es visible y debe limitarse por dominio.
+
+Los materiales de la demo original permanecen en [fuentes históricas](DATA_SOURCES.md) y [componente archivado](docs/radar-app.demo.tsx.txt). No alimentan la experiencia pública actual.
 
 ## Base técnica
 

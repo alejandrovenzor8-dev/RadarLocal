@@ -33,11 +33,15 @@ export async function requireBusinessOwner(db: Database, principal: Principal, b
 }
 
 export async function hasBusinessBenefit(db: Database, businessId: string, benefitKey: string, now = new Date()): Promise<boolean> {
+  const value = await getBusinessBenefitValue(db, businessId, benefitKey, now);
+  return typeof value === "boolean" ? value : typeof value === "number" ? value > 0 : typeof value === "string" ? value.length > 0 : false;
+}
+
+export async function getBusinessBenefitValue(db: Database, businessId: string, benefitKey: string, now = new Date()): Promise<boolean | number | string | null> {
   const rows = await db.select({ value: planBenefits.value }).from(subscriptions)
     .innerJoin(plans, eq(subscriptions.planId, plans.id))
     .innerJoin(planBenefits, eq(planBenefits.planId, plans.id))
     .where(and(eq(subscriptions.businessId, businessId), eq(subscriptions.status, "ACTIVA"), eq(plans.status, "PUBLICADO"), eq(planBenefits.key, benefitKey),
       or(isNull(subscriptions.startsAt), lt(subscriptions.startsAt, now)), or(isNull(subscriptions.endsAt), gt(subscriptions.endsAt, now)))).limit(1);
-  const value = rows[0]?.value;
-  return typeof value === "boolean" ? value : typeof value === "number" ? value > 0 : typeof value === "string" ? value.length > 0 : false;
+  return rows[0]?.value ?? null;
 }

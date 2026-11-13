@@ -21,6 +21,13 @@ export async function withPrincipal(request: Request, run: (db: Database, princi
   } catch (error) {
     if (error instanceof AppError) return Response.json({ error: error.message }, { status: error.status });
     if (error instanceof ZodError) return Response.json({ error: "Datos inválidos", issues: error.issues }, { status: 400 });
+    if (error instanceof SyntaxError) return Response.json({ error: "JSON inválido" }, { status: 400 });
+    const databaseError = error && typeof error === "object" && "cause" in error && error.cause ? error.cause : error;
+    if (databaseError && typeof databaseError === "object" && "code" in databaseError) {
+      if (databaseError.code === "23505") return Response.json({ error: "Ya existe un registro con esos datos" }, { status: 409 });
+      if (databaseError.code === "23503") return Response.json({ error: "La referencia seleccionada no existe" }, { status: 400 });
+      if (databaseError.code === "23514") return Response.json({ error: "Los datos no cumplen las restricciones" }, { status: 400 });
+    }
     console.error("Error en operación protegida", error);
     return Response.json({ error: "Servicio temporalmente no disponible" }, { status: 503 });
   }
