@@ -13,6 +13,7 @@
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "test": "vitest run",
     "deploy:dry-run": "node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js deploy --config dist/server/wrangler.json --dry-run",
+    "verify:staging-build": "node scripts/verify-staging-build.mjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "import:candidates": "tsx scripts/import-candidates.ts",

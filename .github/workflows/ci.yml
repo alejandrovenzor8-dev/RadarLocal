@@ -1,0 +1,43 @@
+name: Calidad
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: radar_test
+          POSTGRES_PASSWORD: radar_test_only
+          POSTGRES_DB: radarlocal_phase1_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U radar_test -d radarlocal_phase1_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://radar_test:radar_test_only@127.0.0.1:5432/radarlocal_phase1_test
+      TEST_DATABASE_URL: postgresql://radar_test:radar_test_only@127.0.0.1:5432/radarlocal_phase1_test
+      RADAR_DEPLOY_ENV: staging
+      RADAR_STAGING_HYPERDRIVE_ID: 00000000000000000000000000000000
+      RADAR_STAGING_R2_BUCKET_NAME: staging-build-placeholder
+      SHARP_IGNORE_GLOBAL_LIBVIPS: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - run: npm run db:migrate
+      - run: npm test
+      - run: npx tsc --noEmit --incremental false
+      - run: npm run lint
+      - run: npm run build
+      - run: npm run verify:staging-build

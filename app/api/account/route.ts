@@ -2,6 +2,7 @@ import { env } from "cloudflare:workers";
 import { withDb } from "@/db";
 import { createAuth } from "@/lib/server/auth";
 import { sendAuthEmail } from "@/lib/server/email";
+import { logServerError } from "@/lib/server/safe-log";
 import { eq } from "drizzle-orm";
 import { userRoles } from "@/db/schema";
 
@@ -16,7 +17,7 @@ export async function GET(request: Request) {
     });
     return Response.json(result, { headers: { "cache-control": "private, no-store" } });
   } catch (error) {
-    console.error("No se pudo leer la sesión", error);
+    logServerError("account_session", error);
     return Response.json({ user: null, roles: [], available: false }, { status: 503, headers: { "cache-control": "private, no-store" } });
   }
 }

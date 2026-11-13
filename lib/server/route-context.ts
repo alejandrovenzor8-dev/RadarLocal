@@ -4,6 +4,7 @@ import { withDb, type Database } from "@/db";
 import { type Principal, requirePrincipal } from "./permissions";
 import { sendAuthEmail } from "./email";
 import { AppError } from "./errors";
+import { logServerError } from "./safe-log";
 
 export async function withPrincipal(request: Request, run: (db: Database, principal: Principal) => Promise<Response>): Promise<Response> {
   if (!env.BETTER_AUTH_SECRET || !env.BETTER_AUTH_URL) return Response.json({ error: "Autenticación sin configurar" }, { status: 503 });
@@ -28,7 +29,7 @@ export async function withPrincipal(request: Request, run: (db: Database, princi
       if (databaseError.code === "23503") return Response.json({ error: "La referencia seleccionada no existe" }, { status: 400 });
       if (databaseError.code === "23514") return Response.json({ error: "Los datos no cumplen las restricciones" }, { status: 400 });
     }
-    console.error("Error en operación protegida", error);
+    logServerError("protected_operation", error);
     return Response.json({ error: "Servicio temporalmente no disponible" }, { status: 503 });
   }
 }

@@ -5,16 +5,24 @@ import { readExecutionProfile } from "./scripts/execution-profile.mjs";
 // macOS Seatbelt blocks FSEvents, so Codex previews need polling for HMR.
 const isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === "seatbelt";
 const managedLinux = readExecutionProfile() === "managed-linux";
+const isStaging = process.env.RADAR_DEPLOY_ENV === "staging";
+if (process.env.RADAR_DEPLOY_ENV && !isStaging) throw new Error("RADAR_DEPLOY_ENV no reconocido");
+if (isStaging && (!process.env.RADAR_STAGING_HYPERDRIVE_ID || !process.env.RADAR_STAGING_R2_BUCKET_NAME)) {
+  throw new Error("Staging requiere RADAR_STAGING_HYPERDRIVE_ID y RADAR_STAGING_R2_BUCKET_NAME propios");
+}
+const hyperdriveId = isStaging ? process.env.RADAR_STAGING_HYPERDRIVE_ID : process.env.RADAR_HYPERDRIVE_ID;
+const bucketName = isStaging ? process.env.RADAR_STAGING_R2_BUCKET_NAME : process.env.RADAR_R2_BUCKET_NAME;
 
 const localBindingConfig = {
+  ...(isStaging ? { name: "radarlocal-staging", vars: { RADAR_ENVIRONMENT: "staging" } } : {}),
   main: "vinext/server/fetch-handler",
   compatibility_date: "2026-05-22",
   compatibility_flags: ["nodejs_compat"],
-  hyperdrive: process.env.RADAR_HYPERDRIVE_ID
-    ? [{ binding: "HYPERDRIVE_FRESH", id: process.env.RADAR_HYPERDRIVE_ID }]
+  hyperdrive: hyperdriveId
+    ? [{ binding: "HYPERDRIVE_FRESH", id: hyperdriveId }]
     : [],
-  r2_buckets: process.env.RADAR_R2_BUCKET_NAME
-    ? [{ binding: "BUCKET", bucket_name: process.env.RADAR_R2_BUCKET_NAME }]
+  r2_buckets: bucketName
+    ? [{ binding: "BUCKET", bucket_name: bucketName }]
     : [],
 };
 

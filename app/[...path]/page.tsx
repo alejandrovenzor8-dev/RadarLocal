@@ -1,11 +1,13 @@
 import RadarApp from "@/components/radar-app";
 import type { Metadata } from "next";
+import { env } from "cloudflare:workers";
 import { loadPublicPage } from "@/lib/server/public-page";
 
 type Props = { params: Promise<{ path: string[] }>; searchParams: Promise<Record<string, string | string[] | undefined>> };
 export const dynamic = "force-dynamic";
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const path = "/" + (await params).path.join("/");
+  if (env.RADAR_ENVIRONMENT === "staging") return { robots: { index: false, follow: false } };
   if (["/login", "/registro", "/recuperar", "/restablecer", "/verificar-correo"].includes(path) || path.startsWith("/mi-cuenta")) return { robots: { index: false, follow: false } };
   if (!path.startsWith("/negocio/")) return { robots: { index: true, follow: true } };
   const data = await loadPublicPage(path);

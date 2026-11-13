@@ -2,6 +2,7 @@ import { env } from "cloudflare:workers";
 import { withDb } from "@/db";
 import { createAuth } from "@/lib/server/auth";
 import { sendAuthEmail } from "@/lib/server/email";
+import { logServerError } from "@/lib/server/safe-log";
 
 async function handle(request: Request): Promise<Response> {
   if (!env.BETTER_AUTH_SECRET || !env.BETTER_AUTH_URL) {
@@ -18,7 +19,7 @@ async function handle(request: Request): Promise<Response> {
       sendEmail: sendAuthEmail,
     }).handler(request));
   } catch (error) {
-    console.error("Error de autenticación", error);
+    logServerError("auth", error);
     return Response.json({ error: "Servicio temporalmente no disponible" }, { status: 503 });
   }
 }

@@ -4,6 +4,7 @@ import { env } from "cloudflare:workers";
 import { withDb } from "@/db";
 import { legalDocuments, plans, platformSettings } from "@/db/schema";
 import { getPublicBusiness, listPublicBusinesses, listPublicContent, listPublicTaxonomy, type DirectoryResult } from "./public-directory";
+import { logServerError } from "./safe-log";
 
 export type PublicPageData = {
   directory: DirectoryResult;
@@ -50,7 +51,7 @@ export async function loadPublicPage(path: string, params: Record<string, string
     });
   } catch (error) {
     if (error instanceof ZodError) return { ...empty, invalidFilter: true, query };
-    console.error("No se pudo cargar el directorio público", error);
+    logServerError("public_directory", error);
     return { ...empty, unavailable: true, query };
   }
 }

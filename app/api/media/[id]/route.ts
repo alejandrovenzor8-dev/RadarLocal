@@ -7,6 +7,7 @@ import { AppError } from "@/lib/server/errors";
 import { sendAuthEmail } from "@/lib/server/email";
 import { isPublicMedia } from "@/lib/server/media";
 import { requireBusinessOwner, requirePrincipal } from "@/lib/server/permissions";
+import { logServerError } from "@/lib/server/safe-log";
 
 export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
@@ -29,7 +30,7 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
     });
   } catch (error) {
     if (error instanceof AppError) return new Response(null, { status: error.status });
-    console.error("No se pudo leer la imagen", error);
+    logServerError("media_read", error);
     return new Response(null, { status: 503 });
   }
 }

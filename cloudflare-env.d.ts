@@ -1,5 +1,6 @@
 declare namespace Cloudflare {
   interface Env {
+    RADAR_ENVIRONMENT?: "staging";
     HYPERDRIVE_FRESH?: Hyperdrive;
     DATABASE_URL?: string;
     BETTER_AUTH_SECRET?: string;
